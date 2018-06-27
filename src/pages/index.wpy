@@ -16,9 +16,9 @@
             </view>
         </view>
         <view>
-            <view class="card">
+            <!-- <view class="card">
                 <image class="logoimg" src="/images/logo.png"></image>
-            </view>
+            </view> -->
         </view>
     </view>
 </template>
@@ -48,7 +48,26 @@ export default class Index extends wepy.page{
                 name: '图书馆',
                 icon: 'loan'
             },
-            
+            {
+                id: 'course',
+                name: '课程',
+                icon: 'course'
+            },
+            {
+                id: 'qsc',
+                name: '求是潮',
+                icon: 'qsc'
+            },
+            {
+                id: 'box',
+                name: 'Box',
+                icon: 'box'
+            },
+            {
+                id: 'mobile',
+                name: 'Mobile',
+                icon: 'mobile'
+            },
         ]
     }
 }
@@ -63,17 +82,22 @@ page {
     height: 190rpx;
 }
 .title {
-    margin: 20rpx;
-    font-size: 50rpx;
+    display: inline-block;
+    background-color: #fff;
+    margin: 35rpx 15rpx -10rpx 20rpx;
+    border-radius: 30rpx 30rpx 0rpx 0rpx;
+    // box-shadow: -2rpx -1rpx 1rpx #ddd;
+    padding: 30rpx 40rpx 30rpx 30rpx;
+    font-size: 60rpx;
 }
 .funcGrid {
     background: #fff;
-    margin: 20rpx;
-    border-radius: 10rpx;
-    box-shadow: 0rpx 4rpx 10rpx #ddd;
+    margin: 0rpx 20rpx 20rpx 20rpx;
+    border-radius: 0rpx 10rpx 10rpx 10rpx;
+    box-shadow: 3rpx 8rpx 15rpx #ddd;
     padding: 15rpx 10rpx 10rpx;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 .card {
