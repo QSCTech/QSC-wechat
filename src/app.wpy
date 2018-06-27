@@ -48,7 +48,7 @@ export default class extends wepy.app {
           text: "我的",
           iconPath: "icon/user.png",
           selectedIconPath: "icon/user@select.png"
-        }
+        },
       ]
     }
   }
