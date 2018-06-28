@@ -54,9 +54,9 @@ export default class Index extends wepy.page{
                 icon: 'course'
             },
             {
-                id: 'qsc',
-                name: '求是潮',
-                icon: 'qsc'
+                id: 'notice',
+                name: 'Notice',
+                icon: 'notice'
             },
             {
                 id: 'box',
@@ -67,6 +67,16 @@ export default class Index extends wepy.page{
                 id: 'mobile',
                 name: 'Mobile',
                 icon: 'mobile'
+            },
+            {
+                id: 'card',
+                name: '校园卡',
+                icon: 'card'
+            },
+            {
+                id: 'recruit',
+                name: '2018秋纳',
+                icon: 'qsc'
             },
         ]
     }
@@ -84,20 +94,20 @@ page {
 .title {
     display: inline-block;
     background-color: #fff;
-    margin: 35rpx 15rpx -10rpx 20rpx;
-    border-radius: 30rpx 30rpx 0rpx 0rpx;
+    margin: 35rpx 15rpx -10rpx 25rpx;
+    border-radius: 40rpx 40rpx 0rpx 0rpx;
     // box-shadow: -2rpx -1rpx 1rpx #ddd;
     padding: 30rpx 40rpx 30rpx 30rpx;
     font-size: 60rpx;
 }
 .funcGrid {
     background: #fff;
-    margin: 0rpx 20rpx 20rpx 20rpx;
+    margin: -10rpx 25rpx 25rpx 25rpx;
     border-radius: 0rpx 10rpx 10rpx 10rpx;
     box-shadow: 3rpx 8rpx 15rpx #ddd;
     padding: 15rpx 10rpx 10rpx;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     flex-wrap: wrap;
 }
 .card {
