@@ -4,7 +4,13 @@
 
 <template>
     <view>
-        hhh
+        
+        <view class="avatar">
+        <open-data type="userAvatarUrl"></open-data>
+      </view>
+      <view class="name">
+        <open-data type="userNickName" lang="zh_CN"></open-data>
+      </view>
     </view>
 </template>
 

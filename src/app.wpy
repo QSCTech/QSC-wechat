@@ -59,24 +59,27 @@ export default class extends wepy.app {
 
   constructor () {
     super()
-    this.use('requestfix')
+    this.use('requestfix');
+    this.use('promisify');
   }
 
   onLaunch() {
-    this.testAsync()
+    this.login();
   }
 
-  sleep (s) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('promise resolved')
-      }, s * 1000)
-    })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
+  async login() {
+    try {
+      const { code } = await wepy.login();
+      const { data } = await wepy.request({
+        url: 'http://localhost:3000/wechat/code',
+        method: 'POST',
+        data: {
+          code
+        }});
+      console.log(data)
+    } catch (error) {
+      console.log('error'+error)
+    }
   }
 
   getUserInfo(cb) {
