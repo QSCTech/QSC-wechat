@@ -13,13 +13,15 @@
 import wepy from 'wepy'
 import 'wepy-async-function'
 
+import storage from './utils/storage'
 
 export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
       'pages/my',
-      'pages/today'
+      'pages/today',
+      'pages/bind',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -61,10 +63,36 @@ export default class extends wepy.app {
     super()
     this.use('requestfix');
     this.use('promisify');
+
+    this.intercept('request', {
+            // 发出请求时的回调函数
+            config (p) {
+                // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
+                p.header = {
+                  'Authorization': `Bearer ${p.general? storage.get('general_token'): storage.get('access_token')}`
+                }
+                console.log('config request: ', p);
+                // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+                return p;
+            },
+
+            success (p) {
+                console.log('request success: ', p);
+                return p;
+            },
+            fail (p) {
+                console.log('request fail: ', p);
+                return p;
+            },
+
+            complete (p) {
+                console.log('request complete: ', p);
+            }
+        });
   }
 
   onLaunch() {
-    this.login();
+    this.checkToken();
   }
 
   async login() {
@@ -76,11 +104,31 @@ export default class extends wepy.app {
         data: {
           code
         }});
-      console.log(data)
+      storage.set('general_token', data.general_token);
+      if(!storage.get('access_token')) {
+        wepy.reLaunch({
+          url: "./pages/bind"
+        });
+      }
     } catch (error) {
-      console.log('error'+error)
+      console.log(error)
     }
   }
+
+  async checkToken() {
+    const access_token = storage.get('access_token');
+    if(!access_token) {
+      await this.login();
+    } else {
+      try {
+        await wepy.checkSession();
+      } catch (err) {
+        console.log(err)
+        this.login();
+      }
+    }
+  }
+
 
   getUserInfo(cb) {
     const that = this
