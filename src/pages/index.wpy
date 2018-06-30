@@ -6,12 +6,12 @@
             </view> -->
             <view class="funcGrid">
                 <block wx:for="{{item}}" wx:key="id">
-                    <view class="iconBtn">
+                    <navigator class="iconBtn" url="{{item.id}}">
                         <image class="icon" src="/icon/index/{{item.icon}}.svg"></image>
                         <text class="text">
                             {{item.name}}
                         </text>
-                    </view>
+                    </navigator>
                 </block>
             </view>
 
@@ -89,12 +89,12 @@ export default class Index extends wepy.page {
   data = {
     item: [
       {
-        id: 'timetable',
+        id: 'schedule',
         name: '课表',
-        icon: 'schedule'
+        icon: 'schedule',
       },
       {
-        id: 'score',
+        id: 'schedule1',
         name: '成绩',
         icon: 'grade'
       },
