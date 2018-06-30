@@ -1,19 +1,79 @@
 <template>
     <view class="main">
         <view>
-            <view class="title">
+            <!-- <view class="title">
                 快捷导航
-            </view>
+            </view> -->
             <view class="funcGrid">
                 <block wx:for="{{item}}" wx:key="id">
-                    <view class="iconBtn">
+                    <navigator class="iconBtn" url="{{item.id}}">
                         <image class="icon" src="/icon/index/{{item.icon}}.svg"></image>
                         <text class="text">
                             {{item.name}}
                         </text>
-                    </view>
+                    </navigator>
                 </block>
             </view>
+
+
+                <view class="main-card-item" id="kb" wx:if="{{card.kb.show}}">
+                <navigator url="/pages/core/kb/kb">
+                    <view class="card-item-hd">
+                    <image class="card-item-icon" src="/icon/index/course.svg"></image>
+                    <text class="card-item-name">今日课表</text>
+                    </view>
+                    <view wx:if="{{card.kb.nothing}}" class="card-item-bd kb-nothing">
+                    <text>今天居然没有课~😆</text>
+                    </view>
+                    <view wx:else class="card-item-bd">
+                    <view class="kb-item" wx:for="{{card.kb.data}}" wx:key="when">
+                        <view class="kb-item-left">
+                        <text class="kb-item-what">{{item.what}}</text>
+                        <text class="kb-item-when">{{item.when}}</text>
+                        </view>
+                        <text class="kb-item-where">{{item.where}}</text>
+                    </view>
+                    </view>
+                    <view class="kb-open">
+                    <text>查看完整课表</text>
+                    </view>
+                </navigator>
+                </view>
+
+                <view class="main-card-item" id="ykt" wx-if="{{card.ykt.show}}">
+                    <navigator url="/pages/core/ykt/ykt">
+                        <view class="card-item-hd">
+                        <image class="card-item-icon" src="/icon/index/card.svg"></image>
+                        <text class="card-item-name">一卡通</text>
+                        </view>
+                        <view class="card-item-bd">
+                        <view class="card-info-hd">
+                            <view class="card-info-left">
+                            <text class="ykt-title">余额：</text>
+                            </view>
+                            <view class="card-info-right">
+                            <view>截至时间：{{card.ykt.data.last_time}}</view>
+                            </view>
+                        </view>
+                        <view class="ykt-balance">
+                            <text class="ykt-balance-value">{{card.ykt.data.balance}}</text>
+                            <text class="ykt-balance-text">元</text>
+                        </view>
+                        <block wx:if="{{card.ykt.data.cost_status}}">
+                            <text class="ykt-title">今日消费：</text>
+                            <view class="ykt-cost">
+                            <block wx:for="{{card.ykt.data.today_cost.value}}" wx:key="*this">
+                                <text class="ykt-cost-value">{{item}}</text>
+                                <text class="ykt-cost-text" wx:if="{{ index != card.ykt.data.today_cost.value.length - 1}}">+</text>
+                            </block>
+                            <text class="ykt-cost-text">=</text>
+                            <text class="ykt-cost-total">{{card.ykt.data.today_cost.total}}</text>
+                            <text class="ykt-cost-text">元</text>
+                            </view>
+                        </block>
+                        </view>
+                    </navigator>
+                    </view>
         </view>
         <view>
             <!-- <view class="card">
@@ -25,124 +85,504 @@
 
 <script>
 import wepy from 'wepy';
-export default class Index extends wepy.page{
-    data = {
-        item: [
+export default class Index extends wepy.page {
+  data = {
+    item: [
+      {
+        id: 'schedule',
+        name: '课表',
+        icon: 'schedule',
+      },
+      {
+        id: 'schedule1',
+        name: '成绩',
+        icon: 'grade'
+      },
+      {
+        id: 'score',
+        name: '校车',
+        icon: 'bus'
+      },
+      {
+        id: 'score',
+        name: '图书馆',
+        icon: 'loan'
+      },
+      {
+        id: 'course',
+        name: '课程',
+        icon: 'course'
+      },
+      {
+        id: 'notice',
+        name: 'Notice',
+        icon: 'notice'
+      },
+      {
+        id: 'box',
+        name: 'Box',
+        icon: 'box'
+      },
+      {
+        id: 'mobile',
+        name: 'Mobile',
+        icon: 'mobile'
+      },
+      {
+        id: 'card',
+        name: '校园卡',
+        icon: 'card'
+      },
+      {
+        id: 'recruit',
+        name: '2018秋纳',
+        icon: 'qsc'
+      }
+    ],
+
+    card: {
+      kb: {
+        show: true,
+        time_list: [
+          { begin: '8:00', end: '8:45' },
+          { begin: '8:55', end: '9:40' },
+          { begin: '10:05', end: '10:50' },
+          { begin: '11:00', end: '11:45' },
+          { begin: '14:00', end: '14:45' },
+          { begin: '14:55', end: '15:40' },
+          { begin: '16:05', end: '16:50' },
+          { begin: '17:00', end: '17:45' },
+          { begin: '19:00', end: '19:45' },
+          { begin: '19:55', end: '20:40' },
+          { begin: '20:50', end: '21:35' },
+          { begin: '21:45', end: '22:30' }
+        ],
+        data: [
             {
-                id: 'timetable',
-                name: '课表',
-                icon: 'schedule'
-            },
-            {
-                id: 'score',
-                name: '成绩',
-                icon: 'grade'
-            },
-            {
-                id: 'score',
-                name: '校车',
-                icon: 'bus'
-            },
-            {
-                id: 'score',
-                name: '图书馆',
-                icon: 'loan'
-            },
-            {
-                id: 'course',
-                name: '课程',
-                icon: 'course'
-            },
-            {
-                id: 'notice',
-                name: 'Notice',
-                icon: 'notice'
-            },
-            {
-                id: 'box',
-                name: 'Box',
-                icon: 'box'
-            },
-            {
-                id: 'mobile',
-                name: 'Mobile',
-                icon: 'mobile'
-            },
-            {
-                id: 'card',
-                name: '校园卡',
-                icon: 'card'
-            },
-            {
-                id: 'recruit',
-                name: '2018秋纳',
-                icon: 'qsc'
-            },
+                what: 'dsafsda',
+                when: 'asfsda',
+                where: 'dsafsda',
+            }
         ]
+      },
+      ykt: {
+        show: true,
+        data: {
+          last_time: '2018-06-29',
+          balance: 10.2,
+          cost_status: false,
+          today_cost: {
+            value: [],
+            total: 0
+          }
+        }
+      },
+      jy: {
+        show: false,
+        data: {}
+      },
+      sdf: {
+        show: false,
+        data: {
+          room: '',
+          record_time: '',
+          cost: 0,
+          spend: 0
+        }
+      }
     }
-    onLoad() {
-        
-    }
+  };
+  onLoad() {}
 }
 </script>
 
 <style lang="less">
 page {
-    background: #f8f8f5;
+  background: #f8f8f5;
 }
 .logoimg {
-    width: 100%;
-    height: 190rpx;
+  width: 100%;
+  height: 190rpx;
 }
 .title {
-    display: inline-block;
-    background-color: #fff;
-    margin: 35rpx 15rpx -10rpx 25rpx;
-    border-radius: 40rpx 40rpx 0rpx 0rpx;
-    // box-shadow: -2rpx -1rpx 1rpx #ddd;
-    padding: 30rpx 40rpx 30rpx 30rpx;
-    font-size: 60rpx;
+  display: inline-block;
+  background-color: #fff;
+  margin: 35rpx 15rpx -10rpx 25rpx;
+  border-radius: 40rpx 40rpx 0rpx 0rpx;
+  // box-shadow: -2rpx -1rpx 1rpx #ddd;
+  padding: 30rpx 40rpx 30rpx 30rpx;
+  font-size: 60rpx;
 }
 .funcGrid {
-    background: #fff;
-    margin: -10rpx 25rpx 25rpx 25rpx;
-    border-radius: 0rpx 10rpx 10rpx 10rpx;
-    box-shadow: 3rpx 8rpx 15rpx #ddd;
-    padding: 15rpx 10rpx 10rpx;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  background: #fff;
+  margin: -10rpx 30rpx 40rpx 30rpx;
+  margin-top: 50rpx;
+  border-radius: 10rpx 10rpx 10rpx 10rpx;
+  box-shadow: 10rpx 8rpx 25rpx #ddd;
+  padding: 15rpx 10rpx 10rpx;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 .card {
-    background: #fff;
-    margin: 20rpx;
-    min-height: 300rpx;
-    margin-top: 40rpx;
-    border-radius: 10rpx;
-    box-shadow: 0rpx 4rpx 10rpx #ddd;
-    padding: 15rpx 10rpx 10rpx;
-    display: flex;
-    align-items: center;
+  background: #fff;
+  margin: 20rpx;
+  min-height: 300rpx;
+  margin-top: 40rpx;
+  border-radius: 10rpx;
+  box-shadow: 0rpx 4rpx 10rpx #ddd;
+  padding: 15rpx 10rpx 10rpx;
+  display: flex;
+  align-items: center;
 }
 .iconBtn {
-    padding-top: 0rpx;
-    text-align: center;
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: center;
-    align-content: space-between;
-    align-items: center;
-    width: 20%;
-    height: 160rpx;
-    .icon {
-        width: 80rpx;
-        height: 80rpx;
-    }
-    .text {
-        width: 100%;
-        display: block;
-        margin-top: -30rpx;
-        font-size: 28rpx;
-    }
+  padding-top: 0rpx;
+  text-align: center;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-content: space-between;
+  align-items: center;
+  width: 20%;
+  height: 160rpx;
+  .icon {
+    width: 80rpx;
+    height: 80rpx;
+  }
+  .text {
+    width: 100%;
+    display: block;
+    margin-top: -30rpx;
+    font-size: 28rpx;
+  }
+}
+
+/**卡片列表**/
+.main-card {
+  padding-bottom: 300rpx;
+}
+.main-card-item {
+    border-radius: 10rpx;
+  box-shadow: 10rpx 8rpx 25rpx #ddd;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-top: 1rpx solid #e5e5e5;
+  border-bottom: 1rpx solid #e5e5e5;
+  margin: 30rpx;
+  margin-bottom: 40rpx;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-position: bottom center;
+  overflow: hidden;
+}
+.main-card-item#kb {
+  /*background-image: url('/images/index/kb-bg.png');*/
+  /*微信暂不支持静态bgimg文件，改用服务器url*/
+  background-image: url();
+}
+.main-card-item#ykt {
+  /*background-image: url('/images/index/ykt-bg.png');*/
+  /*微信暂不支持静态bgimg文件，改用服务器url*/
+  background-image: url();
+}
+.main-card-item#jy {
+  /*background-image: url('/images/index/jy-bg.png');*/
+  /*微信暂不支持静态bgimg文件，改用服务器url*/
+  background-image: url('https://we.cqu.pt/app/images/index/jy-bg.png');
+}
+.main-card-item#sdf {
+  /*background-image: url('/images/index/sdf-bg.png');*/
+  /*微信暂不支持静态bgimg文件，改用服务器url*/
+  background-image: url('https://we.cqu.pt/app/images/index/sdf-bg.png');
+}
+.main-card-item navigator {
+  display: flex;
+  flex-direction: column;
+}
+page .navigator-hover {
+  background-color: rgba(100, 100, 100, 0.1);
+  opacity: 0.8;
+}
+.card-item-hd {
+  display: flex;
+  align-items: center;
+  height: 75rpx;
+  border-bottom: 1rpx solid #e5e5e5;
+  margin-left: 30rpx;
+}
+.card-item-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+.card-item-name {
+  letter-spacing: 2px;
+}
+.card-item-more {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 25rpx;
+}
+.card-item-open {
+  width: 30rpx;
+  height: 30rpx;
+}
+.card-item-bd {
+  padding: 20rpx 25rpx 30rpx 0;
+  margin-left: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+.card-info-hd {
+  display: flex;
+  justify-content: space-between;
+}
+.card-info-left {
+  display: flex;
+  flex-direction: column;
+}
+.card-info-right {
+  display: flex;
+  color: #acacac;
+  flex-direction: column;
+}
+.card-info-name {
+  font-size: 16pt;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  color: #acacac;
+}
+.card-info-number {
+  line-height: 175%;
+  text-indent: 1px;
+  color: #aaa;
+}
+.main-ending {
+  display: none;
+  /*display: flex;*/
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 75rpx;
+  overflow: hidden;
+}
+.main-ending-text {
+  width: 72pt;
+  color: #ccc;
+  font-size: 8pt;
+  padding: 0 16rpx;
+  text-align: center;
+  white-space: nowrap;
+}
+.main-ending-line {
+  width: 100%;
+  height: 0;
+  border-top: 1rpx solid #e5e5e5;
+}
+/**今日课表**/
+.main-card-item#kb .card-item-bd {
+  padding: 0;
+  margin-right: 25rpx;
+}
+.kb-nothing {
+  align-items: center;
+  justify-content: center;
+  font-size: 11pt;
+  min-height: 150rpx;
+}
+.kb-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #7f848a;
+  height: 90rpx;
+  border-top: 1rpx solid #e5e5e5;
+  margin-top: -1rpx;
+}
+.kb-item {
+  display: flex;
+  height: 120rpx;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dotted #e5e5e5;
+}
+.kb-item-left {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding-right: 30rpx;
+  overflow: hidden;
+}
+.kb-item-what {
+  font-size: 12pt;
+  line-height: 200%;
+  color: #777;
+  white-space: nowrap;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.kb-item-when {
+  line-height: 125%;
+  color: #bbb;
+}
+.kb-item-where {
+  flex: 0 0 auto;
+  font-size: 14pt;
+  color: #999;
+  letter-spacing: 1px;
+}
+/**一卡通**/
+.ykt-balance {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-weight: bold;
+  padding: 25rpx 0 30rpx;
+}
+.ykt-balance-text {
+  font-size: 17pt;
+  line-height: 2;
+  color: #999;
+}
+.ykt-balance-value {
+  font-size: 58pt;
+  line-height: 1;
+  padding: 0 20rpx;
+  color: #ffbf92;
+}
+.ykt-cost {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 20rpx 0 30rpx;
+  font-weight: bold;
+  line-height: 200%;
+}
+.ykt-cost-text {
+  font-size: 10pt;
+  color: #999;
+}
+.ykt-cost-value {
+  font-size: 12pt;
+  font-weight: normal;
+  color: #777;
+  padding: 0 10rpx;
+}
+.ykt-cost-total {
+  font-size: 16pt;
+  color: #ffbf92;
+  padding: 0 10rpx;
+}
+.ykt-title {
+  font-size: 10pt;
+}
+.ykt-no-cost {
+  color: #bbb;
+}
+/**借阅信息**/
+.main-card-item#jy .card-item-bd {
+  padding-bottom: 85rpx;
+}
+.jy-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.jy-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20rpx 15rpx 15rpx;
+}
+.jy-book {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 176rpx;
+  height: 231rpx;
+  /*background-image: url('/images/index/jy-book.png');*/
+  /*微信暂不支持静态bgimg文件，改用服务器url*/
+  background-image: url('https://we.cqu.pt/app/images/index/jy-book.png');
+  background-size: 100% 100%;
+  padding: 5rpx 5rpx 50rpx 30rpx;
+  color: #fff;
+  margin-bottom: 10rpx;
+}
+.jy-pickup-time {
+  text-align: right;
+  font-size: 8pt;
+  word-wrap: break-word;
+  white-space: nowrap;
+}
+.jy-pickup-time-text {
+  padding-left: 4rpx;
+}
+.jy-book-name {
+  height: 126rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  line-height: 150%;
+  word-wrap: break-word;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+.jy-timing,
+jy-return-time {
+  line-height: 200%;
+}
+.jy-timing-value {
+  font-size: 13pt;
+  font-weight: bold;
+  color: #729fc3;
+  padding: 0 8rpx;
+}
+.jy-timing-text {
+  font-size: 10pt;
+  color: #acacac;
+}
+.jy-return-time-value {
+  font-size: 12pt;
+  color: #7f848a;
+}
+.jy-return-time-text {
+  font-size: 10pt;
+  color: #acacac;
+  padding-left: 8rpx;
+}
+/**水电费**/
+.main-card-item#sdf .card-item-bd {
+  padding-bottom: 80rpx;
+}
+.sdf-hd {
+  color: #acacac;
+  margin: 40rpx 0 20rpx;
+}
+.sdf-bd {
+  display: flex;
+  justify-content: space-between;
+  padding: 30rpx 0;
+}
+.sdf-key {
+  padding: 0 10rpx;
+}
+.sdf-value {
+  color: #ffbf92;
+  font-size: 46pt;
+  font-weight: bold;
+  padding: 0 15rpx;
+}
+.sdf-text {
+  color: #acacac;
+  font-size: 13pt;
 }
 </style>
