@@ -1,8 +1,8 @@
 <template>
-    <view>
+    <view class="container">
         <view class="main-container">
+            <!-- Daytime column -->
             <view class="daytime-col">
-
                 <view class="kb-mon kb-date">
                     Hour
                     <!-- <block wx:if="{{week != '*'}}"><text>{{dates[week-1][0].month}}</text><text>月</text></block> -->
@@ -20,14 +20,16 @@
                 <view>18</view>
                 <view>19</view>
                 <view>20</view>
-
             </view>
+            <scroll-view class="course-container">
+                <view class="course-title">
 
-            <view>
+                </view>
+                <view class="course-main">
 
-            </view>
+                </view>
+            </scroll-view>
         </view>
-
         <view class="info-card">
 
         </view>
@@ -91,6 +93,37 @@ export default {
     height: 100rpx;
     line-height: 100rpx;
     text-align: center;
+}
+.course-container {
+    width: 100%;
+    height: calc(100%+110rpx);
+}
+.course-title {
+    position:absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 910rpx;
+    height: 60rpx;
+    padding-left: 10rpx;
+    border-bottom: 1rpx solid #eee;
+    margin-left: 50rpx;
+    color:#777;
+}
+.course-main {
+    position:absolute;
+    top:0;
+    left:0;
+    flex:1;
+    width:910rpx;
+    height:1248rpx;
+    display:flex;
+    align-items:stretch;
+    padding:8rpx 0 12rpx 10rpx;
+    margin-left:50rpx;
+    margin-top:60rpx;
+    padding-bottom:100rpx;
+
 }
 .mg-t{
     padding-top: 8rpx;
