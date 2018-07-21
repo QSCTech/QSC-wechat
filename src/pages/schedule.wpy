@@ -23,7 +23,7 @@
             </view>
             <scroll-view class="course-container">
                 <view class="course-title">
-
+                    <scroll-view></scroll-view>
                 </view>
                 <view class="course-main">
 
