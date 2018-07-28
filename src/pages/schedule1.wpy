@@ -65,7 +65,7 @@
                     <view class="kb-timeline-tri" style="top:{{timelineTop}}rpx"></view>
                 </view>
 
-                <!-- 卡片部分 -->
+                <!-- 卡片部分  -->
                 <view class="kb-cards-ctn blur-area {{blur?'blur':''}}">
                     <!-- 每一列为一组 -->
                     <view class="kb-cards-column" wx:for="{{lessons}}" wx:key="{{day}}" wx:for-item="day_lesson" wx:for-index="day">
