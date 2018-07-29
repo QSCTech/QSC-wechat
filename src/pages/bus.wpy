@@ -4,17 +4,19 @@
 
 <template>
     <view>
-        <view>校车</view>
-            <view>
+        <view class = "title">校车</view>
+            <view class = "header">
             <view>起点</view>
             <view>终点</view>
         </view>
-        <button @tap="switch">Switch</button>
-        <view>
+        <view class="button">
+            <button @tap="switch">Switch</button>
+        </view>
+        <view class = "detail">
             <car></car>
             <car></car>
         </view>
-    </view>
+    </view> 
 </template>
 
 <script>
@@ -38,16 +40,16 @@ export default class Bus extends wepy.page{
 
     // Config
 
-    onShow() {
+    onLoad() {
             const day = new Date()
             const week = day.getDay()
             this.date = day.toDateString()
-            this.weekend = (week === '6' || week === '0') ? false : true
+            this.weekend = (week == 6 || week == 0) ? true : false
         };
             
     methods = {
         switch (){
-            console.log(this)
+            this.weekend =  !this.weekend
             console.log(this.data)
         }
     }
