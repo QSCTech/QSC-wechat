@@ -23,7 +23,8 @@ export default class extends wepy.app {
       'pages/today',
       'pages/bind',
       'pages/schedule',
-      'pages/schedule1'
+      'pages/schedule1',
+      'pages/bus'
     ],
     window: {
       backgroundTextStyle: 'light',

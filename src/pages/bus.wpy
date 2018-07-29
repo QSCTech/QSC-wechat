@@ -1,0 +1,56 @@
+<style>
+
+</style>
+
+<template>
+    <view>
+        <view>校车</view>
+            <view>
+            <view>起点</view>
+            <view>终点</view>
+        </view>
+        <button @tap="switch">Switch</button>
+        <view>
+            <car></car>
+            <car></car>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import Car from '../components/car'
+export default class Bus extends wepy.page{
+
+    //components
+
+    components = {
+            car: Car
+        };
+
+    // Data 
+
+    data = {
+        date: '',
+        weekend: false,
+        destination: 0,  // 0 represent from zjg -> yq
+    };
+
+    // Config
+
+    onShow() {
+            const day = new Date()
+            const week = day.getDay()
+            this.date = day.toDateString()
+            this.weekend = (week === '6' || week === '0') ? false : true
+        };
+            
+    methods = {
+        switch (){
+            console.log(this)
+            console.log(this.data)
+        }
+    }
+
+}
+</script>
