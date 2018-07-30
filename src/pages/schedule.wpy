@@ -37,8 +37,9 @@
 </template>
 
 <script>
-export default {
-
+import wepy from 'wepy';
+export default class Schedule extends wepy.page{
+    
 }
 </script>
 

@@ -11,16 +11,12 @@
   import wepy from 'wepy'
 
   export default class Car extends wepy.component {
-    data = {
-    }
+    data = {}
 
-    events = {
-    }
+    events = {}
 
-    methods ={
-    }
+    methods ={}
 
-    onLoad () {
-    }
+    // onLoad () {}
   }
 </script>
