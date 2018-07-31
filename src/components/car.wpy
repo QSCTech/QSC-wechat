@@ -1,22 +1,50 @@
 <style lang="less">
-
+.car_time{
+  display: flex
+}
+.car_extra{
+  display: flex
+}
 </style>
+
 <template>
-  <view>
-      hahaha
-  </view>
+    <view class="car_container">
+        <view>
+            {{item.name}}
+        </view>
+        <view class="car_info">
+            <view class="car_time">
+                <icon type="success" size="12"></icon>
+                <view>
+                    {{item.departureTime+" - "+item.arrivalTime}}
+                </view>
+            </view>
+            <view class="car_extra" wx:if="{{item.note}} !== ''">
+                <icon type="warn" size="12" wx:if="{{item.note}}"></icon>  <!-- require to be fixed logical --> 
+                <view>
+                    {{item.note}}
+                </view>
+            </view>
+        </view>
+    </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
+    import wepy from 'wepy'
 
-  export default class Car extends wepy.component {
+export default class Car extends wepy.component {
+    props = {
+        item: {
+            type: Object
+            }
+        }
+
     data = {}
 
     events = {}
-
+    
     methods ={}
 
-    // onLoad () {}
-  }
+    onLoad () {}
+}
 </script>
