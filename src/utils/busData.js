@@ -1,4 +1,5 @@
-[
+module.exports = {
+	busData: [
 	{
 		"name": "1号班车",
 		"departureCampus": "玉泉",
@@ -3086,4 +3087,5 @@
 			],
 		"note": "紫金港（生活区、东教学区、西教学区）到西溪（南大门）"
 		}
-    ]
+	]
+}

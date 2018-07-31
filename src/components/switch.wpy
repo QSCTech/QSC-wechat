@@ -51,7 +51,7 @@
   transform: scale(1);
 }
 
-.zan-swtich--disabled {
+.swtich--disabled {
   opacity: 0.4;
 }
 
@@ -75,7 +75,7 @@
 }
 </style>
 <template>
-  <view class="switch switch--{{ checked ? 'on' : 'off' }} {{ disabled ? 'zan-swtich--disabled' : '' }}" data-checked="{{ checked }}" data-loading="{{ loading }}" data-disabled="{{ disabled }}" data-component-id="{{ componentId }}" @tap="handleSwitchChange">
+  <view class="switch switch--{{ checked ? 'on' : 'off' }} {{ disabled ? 'switch--disabled' : '' }}" data-checked="{{ checked }}" data-loading="{{ loading }}" data-disabled="{{ disabled }}" data-component-id="{{ componentId }}" @tap="handleSwitchChange">
     <view class="switch__circle">
       <view hidden="{{ !loading }}" class="switch__loading"></view>
     </view>
@@ -89,7 +89,6 @@ export default class Switch extends wepy.component {
   props = {
     checked: {
       type: Boolean,
-      default: false,
       twoWay: true
     },
     loading: {
@@ -102,7 +101,8 @@ export default class Switch extends wepy.component {
     },
     componentId: String
   }
-  data = {}
+  data = {};
+
   methods = {
     handleSwitchChange(e) {
       let dataset = e.currentTarget.dataset
@@ -114,6 +114,8 @@ export default class Switch extends wepy.component {
 
       this.$emit('SwitchChange')
     }
-  }
+  };
+
+  onLoad() {}
 }
 </script>

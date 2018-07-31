@@ -2,17 +2,15 @@
     <view>
         <view class = "title">校车信息</view>
             <view class = "header">
-            <view>起点</view>
-            <view>终点</view>
+                <view class="start">{{start}}</view>
+                <image class="changeButton" src="../images/change.png" @tap="change"></image>
+                <view class="final">{{final}}</view>
         </view>
 
-        <!-- <view class="button"> -->
-            <!-- <button @tap="change">Change</button> -->
-        <!-- </view> -->
-        
+       
         <view class="weekend">
             <view class="weekend_font">周末模式</view>
-            <switch :disabled="switch_disabled" :checked="switch_checked" componentId="switch"></switch>
+            <switch :disabled="switch_disabled" :checked="weekend" componentId="switch"></switch>
         </view>
         <view class = "detail">
             <car></car>
@@ -25,7 +23,15 @@
 import wepy from 'wepy';
 import Car from '../components/car'
 import Switch from '../components/switch'
-// import BusData from '../utils/busData'
+
+const busData = require('../utils/busData.js').busData  // type Array
+
+        const day = new Date()
+        const week = day.getDay()
+        let weekend = (week == 6 || week == 0) ? true : false
+        // this.date = day.toDateString()
+        // this.data.weekend = (week == 2 || week == 0) ? true : false
+        // console.log("Today is weekend: " + this.data.weekend)
 
 export default class Bus extends wepy.page{
 
@@ -35,39 +41,40 @@ export default class Bus extends wepy.page{
         };
 
     data = {
-        date: '',  // Storage for date
-        weekend: false,  // Storage for weekend status 
-        destination: 0,  // 0 represent from zjg -> yq
-
+        date: day.toDateString,  // Storage for date
+        weekend: weekend,  // Storage for weekend status 
+        // destination: true,  // true represent from zjg -> yq
+    
         // Config for change button
+
+        start: "紫金港",
+        final: "玉泉",
 
         // Config for switch button
 
         switch_disabled: false,
-        switch_checked: false
+        // switch_checked: false
 
     };
 
-    onLoad() {
-        const day = new Date()
-        const week = day.getDay()
-        this.date = day.toDateString()
-        this.weekend = (week == 6 || week == 0) ? true : false
-    };
-            
     events = { 
 
         SwitchChange(event, data) {
-            this.switch_checked = !this.switch_checked
+            this.weekend = !this.weekend
 
             // Warnning : I do not know why the status is opposite while I think it is the init problem
             // So ttfish choose a bad way to figure the bug
 
-            console.log(!this.data.switch_checked)
+            console.log(!this.data.weekend)
         },
+    };
 
-        click(){
-            // console.log(BusData)
+    methods = {
+        change(){
+            let tmp 
+            tmp = this.start
+            this.start = this.final
+            this.final = tmp
         }
     };
 }
@@ -82,5 +89,10 @@ export default class Bus extends wepy.page{
 }
 .weekend{
     display: flex
+}
+.changeButton{
+    height: 45rpx;
+    width: 45rpx;
+    /* align: center   */
 }
 </style>
