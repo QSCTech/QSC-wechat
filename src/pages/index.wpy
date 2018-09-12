@@ -1,0 +1,9 @@
+<template>
+    
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class IndexPage extends wepy.page {
+}
+</script>
