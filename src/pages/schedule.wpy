@@ -1,0 +1,186 @@
+<template>
+    <view class="container">
+        <view class="main-container">
+            <!-- Daytime column -->
+            <view class="daytime-col">
+                <view class="kb-mon kb-date">
+                    Hour
+                    <!-- <block wx:if="{{week != '*'}}"><text>{{dates[week-1][0].month}}</text><text>月</text></block> -->
+                </view>
+                <view class="mg-t">8</view>
+                <view><text>9</text></view>
+                <view>10</view>
+                <view>11</view>
+                <view>12</view>
+                <view>13</view>
+                <view>14</view>
+                <view>15</view>
+                <view>16</view>
+                <view>17</view>
+                <view>18</view>
+                <view>19</view>
+                <view>20</view>
+            </view>
+            <scroll-view class="course-container">
+                <view class="course-title">
+                    <scroll-view></scroll-view>
+                </view>
+                <view class="course-main">
+                    <view wx:for="{{course}}" wx:key="unique" class="col">
+                        <view wx:for="{{item}}" wx:key="unique" wx:for-item="cur" class="item" style="top:{{(cur.startTime.hour-8)*100+(cur.startTime.min*1.67)}}rpx;height:{{cur.duration*1.67}}rpx;" >
+                            <view class="container">
+                                {{cur.name}}
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </scroll-view>
+        </view>
+        <view class="info-card">
+
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class SchedulePage extends wepy.page {
+    data = {
+        course: []
+    }
+    async onLoad() {
+        const course = wx.getStorageSync('course')
+        if(course) {
+            this.course = course
+            
+        } else {
+            wx.request({
+                url: 'http://localhost:8081/?zjuid=3170111705&&pass=l3169856419',
+                method: 'GET',
+                success: (res) => {
+                    console.log(res)
+                    this.course = res.data
+                    wx.setStorageSync('course', this.course)
+                    this.$apply()
+                }
+            })
+        }
+
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.col {
+    /* display: block; */
+    width: 200rpx;
+    /* background-color: black; */
+    display: flex;
+    font-size: 10px;
+    flex-direction: column;
+    position: relative;
+    .item {
+        width: 125rpx;
+        position: absolute;
+        padding: 5rpx;
+        color: white;
+        .container {
+            background-color: #73b4ef;
+            opacity: .6;
+            padding: 5rpx;
+            border-radius: 5rpx;
+        }
+    }
+}
+.container{
+    background-color: #ffffff;
+    padding-bottom: 0;
+    overflow: hidden;
+}
+.main-container {
+    width: 100%;
+    height:1400rpx;
+    display:flex;
+    padding-bottom: 100rpx;
+}
+.info-card{
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100rpx;
+    border-radius: 15px;
+    box-shadow: 10rpx 8rpx 25rpx #ddd;
+    background:#73b4ef;
+    margin: 0rpx 8rpx 10rpx 8rpx;
+}
+.daytime-col {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    font-size: 9pt;
+    width: 50rpx;
+    display: flex;
+    flex-direction:column;
+    align-items:stretch;
+    padding-bottom:100rpx;
+    border-right:1rpx solid #eee;
+}
+.daytime-col .kb-mon {
+    height: 60rpx;
+    font-size: 9pt;
+    line-height: 30rpx;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    border-bottom: 1rpx solid #eee;
+}
+.daytime-col view{
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+}
+.course-container {
+    width: 100%;
+    height: calc(100%+110rpx);
+}
+.course-title {
+    position:absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 910rpx;
+    height: 60rpx;
+    padding-left: 10rpx;
+    border-bottom: 1rpx solid #eee;
+    margin-left: 50rpx;
+    color:#777;
+}
+.course-main {
+    position:absolute;
+    top:0;
+    left:0;
+    flex:1;
+    width:910rpx;
+    height:1248rpx;
+    display:flex;
+    align-items:stretch;
+    padding:8rpx 0 12rpx 10rpx;
+    margin-left:50rpx;
+    margin-top:60rpx;
+    padding-bottom:100rpx;
+
+}
+.mg-t{
+    padding-top: 8rpx;
+}
+.mg-8{
+    margin-bottom: 8rpx;
+}
+.mg-12{
+    margin-bottom: 12rpx;
+}
+</style>

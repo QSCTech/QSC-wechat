@@ -19,10 +19,14 @@ import configStore from './store'
 const store = configStore()
 setStore(store)
 
+import { http } from './utils/http'
+import { set, get, setAsync } from './utils/storage'
+
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index'
+      'pages/index',
+      'pages/schedule'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -43,7 +47,8 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
-
+    wepy.$http = http;
+    wepy.$storage = { set, get, setAsync };
   }
 }
 </script>

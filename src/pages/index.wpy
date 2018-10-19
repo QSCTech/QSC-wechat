@@ -1,9 +1,121 @@
 <template>
-    
+    <view class="main">
+        <view class="funcGrid">
+            <block wx:for="{{item}}" wx:key="id">
+                <navigator class="iconBtn" url="{{item.id}}">
+                    <image class="icon" src="/icon/index/{{item.icon}}.svg"></image>
+                    <text class="text">
+                        {{item.name}}
+                    </text>
+                </navigator>
+            </block>
+        </view>
+        <view class="course">
+            <view class="title">
+
+            </view>
+        </view>
+        <view class="ecard">
+
+        </view>
+    </view>
 </template>
 
 <script>
 import wepy from 'wepy'
 export default class IndexPage extends wepy.page {
+    config = {
+        'usingComponents': {
+            "i-spin": "iview/spin/index",
+            "i-toast": "iview/toast/index",
+            "i-avatar": "iview/avatar/index"
+        }
+    }
+
+    data = {
+        item: [
+        {
+            id: 'schedule',
+            name: '课表',
+            icon: 'schedule',
+        },
+        {
+            id: 'schedule1',
+            name: '成绩',
+            icon: 'grade'
+        },
+        {
+            id: 'score',
+            name: '校车',
+            icon: 'bus'
+        },
+        {
+            id: 'score',
+            name: '图书馆',
+            icon: 'loan'
+        },
+        {
+            id: 'course',
+            name: '课程',
+            icon: 'course'
+        },
+        {
+            id: 'card',
+            name: '校园卡',
+            icon: 'card'
+        },
+        {
+            id: 'recruit',
+            name: '2018秋纳',
+            icon: 'qsc'
+        }
+        ],
+    }
 }
 </script>
+
+<style lang="less" scoped>
+.funcGrid {
+    margin: -10rpx 30rpx 40rpx 30rpx;
+    margin-top: 50rpx;
+    padding: 15rpx 10rpx 10rpx;
+
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+
+    .card();
+
+    .iconBtn {
+        padding-top: 0rpx;
+        text-align: center;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-content: space-between;
+        align-items: center;
+        width: 20%;
+        height: 160rpx;
+        .icon {
+            width: 80rpx;
+            height: 80rpx;
+        }
+        .text {
+            width: 100%;
+            display: block;
+            margin-top: -30rpx;
+            font-size: 28rpx;
+        }
+    }
+}
+.course {
+
+}
+.card {
+    background: #fff;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+}
+
+</style>
