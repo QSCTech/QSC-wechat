@@ -55,7 +55,7 @@ export default class SchedulePage extends wepy.page {
             
         } else {
             wx.request({
-                url: 'http://localhost:8081/?zjuid=3170111705&&pass=l3169856419',
+                url: 'http://localhost:8081/?zjuid=3170111705&&pass=',
                 method: 'GET',
                 success: (res) => {
                     console.log(res)
