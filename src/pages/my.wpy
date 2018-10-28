@@ -52,7 +52,7 @@ export default class MyPage extends wepy.page {
             "i-cell": "iview/cell/index",
             "i-icon": "iview/icon/index"
         },
-        // "navigationBarTitleText": "",
+        "navigationBarTitleText": "设置",
         "navigationBarBackgroundColor": "#6445C2",
         "navigationBarTextStyle": 'white',
     }

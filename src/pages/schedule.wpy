@@ -56,6 +56,7 @@ import wepy from 'wepy'
 export default class SchedulePage extends wepy.page {
     config = {
         "enablePullDownRefresh": true,
+        "navigationBarTitleText": '课程表',
         "usingComponents": {
             "i-spin": "iview/spin/index",
             "i-toast": "iview/toast/index"
