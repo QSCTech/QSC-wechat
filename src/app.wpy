@@ -26,13 +26,44 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
-      'pages/schedule'
+      'pages/schedule',
+      'pages/login'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: '求是潮Wechat',
       navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      selectedColor: '#0084ff',
+      color: '#707070',
+      list: [
+        {
+          pagePath: 'pages/index',
+          text: '首页',
+          iconPath: 'icon/tabbar/home.png',
+          selectedIconPath: 'icon/home@select.png'
+        },
+        {
+          pagePath: 'pages/index',
+          text: '日程',
+          iconPath: 'icon/tabbar/news.png',
+          selectedIconPath: 'icon/news@select.png'
+        },
+        {
+          pagePath: 'pages/index',
+          text: '发现',
+          iconPath: 'icon/tabbar/news.png',
+          selectedIconPath: 'icon/news@select.png'
+        },
+        {
+          pagePath: 'pages/index',
+          text: '个人中心',
+          iconPath: 'icon/tabbar/user.png',
+          selectedIconPath: 'icon/user@select.png'
+        }
+      ]
     }
   }
 
@@ -46,9 +77,33 @@ export default class extends wepy.app {
     this.use('requestfix')
   }
 
-  onLaunch() {
+  async onLaunch() {
     wepy.$http = http;
     wepy.$storage = { set, get, setAsync };
+
+    await this.login()
+  }
+
+  async login() {
+    try {
+      const { code } = await wepy.login()
+      const res = await wepy.$http({
+        method: 'post',
+        url: '/auth/login',
+        data: {
+          code
+        }
+      })
+      wepy.$storage.set('token', res.data.access_token)
+    } catch (error) {
+      if(error.code === 20019) {
+        // No binding user
+        wepy.reLaunch({
+          url: '/pages/login'
+        })
+      }
+      console.log(error)
+    }
   }
 }
 </script>

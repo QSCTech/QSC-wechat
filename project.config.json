@@ -1,7 +1,7 @@
 {
 	"description": "A WePY project",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"postcss": false,
 		"minified": false,
@@ -10,6 +10,6 @@
 	"compileType": "miniprogram",
 	"appid": "wxdb99a92837c753dd",
 	"projectname": "qsc-wechat",
-	"miniprogramRoot": "./dist",
+	"miniprogramRoot": "dist/",
 	"condition": {}
 }
