@@ -1,4 +1,5 @@
 <template>
+    <i-spin size="large" fix wx:if="{{ !loaded }}"></i-spin>
     <view class="container">
         <view class="main-container">
             <!-- Daytime column -->
@@ -53,8 +54,16 @@
 <script>
 import wepy from 'wepy'
 export default class SchedulePage extends wepy.page {
+    config = {
+        "enablePullDownRefresh": true,
+        "usingComponents": {
+            "i-spin": "iview/spin/index",
+            "i-toast": "iview/toast/index"
+        }
+    }
     data = {
         course: [],
+        loaded: true,
     }
     get_color(category) {
         switch(category) {
@@ -84,7 +93,29 @@ export default class SchedulePage extends wepy.page {
         })
         this.course = course
         wepy.$storage.setAsync('course', course)
-        this.$apply()
+    }
+    async initCourse() {
+        try {
+            this.loaded = false;
+            this.$apply()
+            const res = await wepy.$http({
+                url: '/schedule',
+                method: 'get',
+            })
+            this.parse_course(res.data)
+            this.loaded = true;
+            this.$apply()
+        } catch (error) {
+            return Promise.reject(error)
+        }
+    }
+    async onPullDownRefresh() {
+        try {
+            await this.initCourse()
+        } catch (error) {
+            
+        }
+        wx.stopPullDownRefresh()
     }
     async onLoad() {
         const course = wepy.$storage.get('course')
@@ -93,17 +124,11 @@ export default class SchedulePage extends wepy.page {
             this.$apply()
         } else {
             try {
-                const res = await wepy.$http({
-                    url: '/schedule',
-                    method: 'get',
-                })
-                this.parse_course(res.data)
+                await this.initCourse()
             } catch (error) {
                 
             }
-
         }
-
     }
 }
 </script>
