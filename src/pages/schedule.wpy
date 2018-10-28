@@ -27,18 +27,26 @@
                 </view>
                 <view class="course-main">
                     <view wx:for="{{course}}" wx:key="unique" class="col">
-                        <view wx:for="{{item}}" wx:key="unique" wx:for-item="cur" class="item" style="top:{{(cur.startTime.hour-8)*100+(cur.startTime.min*1.67)}}rpx;height:{{cur.duration*1.67}}rpx;" >
-                            <view class="container">
-                                {{cur.name}}
+                        <view wx:for="{{item}}" wx:key="unique" wx:for-item="cur" class="item" style="top:{{(cur.startTime.hour-8)*100+((cur.startTime.min || 0)*1.67)}}rpx;height:{{cur.duration*1.67}}rpx;" >
+                            <view class="container" style="background-color:{{cur.color}} !important;">
+                                <view class="id">
+                                    {{cur.ids}}
+                                </view>
+                                <!-- <view class="">
+                                    {{cur.category}}
+                                </view> -->
+                                <view class="teacher">
+                                    {{cur.teacher}}
+                                </view>
                             </view>
                         </view>
                     </view>
                 </view>
             </scroll-view>
         </view>
-        <view class="info-card">
+        <!-- <view class="info-card">
 
-        </view>
+        </view> -->
     </view>
 </template>
 
@@ -46,24 +54,54 @@
 import wepy from 'wepy'
 export default class SchedulePage extends wepy.page {
     data = {
-        course: []
+        course: [],
+    }
+    get_color(category) {
+        switch(category) {
+            case 'Lecture':
+                return '#7874F2'
+            case 'Discussion':
+                return '#F87D42'
+            case 'Laboratory':
+                return '#F30E5C'
+            case 'practicum':
+                return '#CC99F9'
+            default:
+                return '#62929A'
+        }
+    }
+    parse_course(courseList) {
+        const course = []
+        for(let i = 1; i <= 7; i++) {
+            course.push([])
+        }
+        courseList.forEach((item) => {
+            course[item.weeknum - 1].push({
+                ...item,
+                ids: (item.id.split('-')[0]).trim(),
+                color: this.get_color(item.category)
+            })
+        })
+        this.course = course
+        wepy.$storage.setAsync('course', course)
+        this.$apply()
     }
     async onLoad() {
-        const course = wx.getStorageSync('course')
+        const course = wepy.$storage.get('course')
         if(course) {
             this.course = course
-            
+            this.$apply()
         } else {
-            wx.request({
-                url: 'http://localhost:8081/?zjuid=3170111705&&pass=',
-                method: 'GET',
-                success: (res) => {
-                    console.log(res)
-                    this.course = res.data
-                    wx.setStorageSync('course', this.course)
-                    this.$apply()
-                }
-            })
+            try {
+                const res = await wepy.$http({
+                    url: '/schedule',
+                    method: 'get',
+                })
+                this.parse_course(res.data)
+            } catch (error) {
+                
+            }
+
         }
 
     }
@@ -82,13 +120,22 @@ export default class SchedulePage extends wepy.page {
     .item {
         width: 125rpx;
         position: absolute;
-        padding: 5rpx;
+        padding: 5rpx 4rpx;
         color: white;
         .container {
-            background-color: #73b4ef;
-            opacity: .6;
-            padding: 5rpx;
-            border-radius: 5rpx;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            view {
+                text-align: center;
+            }
+            .id {
+                font-size: 20rpx;
+            }
+            opacity: .7;
+            padding: 5rpx 3rpx;
+            border-radius: 8rpx;
         }
     }
 }
@@ -172,7 +219,6 @@ export default class SchedulePage extends wepy.page {
     margin-left:50rpx;
     margin-top:60rpx;
     padding-bottom:100rpx;
-
 }
 .mg-t{
     padding-top: 8rpx;
