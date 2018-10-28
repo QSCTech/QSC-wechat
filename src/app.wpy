@@ -94,7 +94,7 @@ export default class extends wepy.app {
           code
         }
       })
-      console.log(res)
+      wepy.$storage.set('token', res.data.access_token)
     } catch (error) {
       if(error.code === 20019) {
         // No binding user

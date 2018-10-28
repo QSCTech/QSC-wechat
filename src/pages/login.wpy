@@ -6,8 +6,8 @@
         <form bindsubmit="formSubmit">
             <view class="form">
                 <view class="section">
-                    <input name="ZJUid" placeholder="请输入学号" />
-                    <input name="password" placeholder="请输入密码" />
+                    <input name="ZJUid" placeholder="请输入学号" type="number"/>
+                    <input name="password" placeholder="请输入密码" password="true"/>
                 </view>
 
                 <view class="btn-area">
@@ -15,20 +15,56 @@
                 </view>
             </view>
         </form>
+        <i-toast id="toast" />
     </view>
 </template>
 
 <script>
 import wepy from 'wepy'
+const { $Toast } = require('./iview/base/index');
 
 export default class LoginPage extends wepy.page {
+    config = {
+        'usingComponents': {
+            "i-toast": "iview/toast/index"
+      }
+    }
     methods = {
-        formSubmit(e) {
+        async formSubmit(e) {
             this.loading = true
-            console.log(e.detail.value)
+            const { code } = await wepy.login()
+            const data = e.detail.value
+            try {
+                const res = await wepy.$http({
+                    url: '/auth/bind',
+                    data: {
+                        ...data,
+                        code
+                    },
+                    method: 'post'
+                })
+                this.loading = false
+                this.$apply()
+                wx.showToast({
+                    title: '绑定成功',
+                    icon: 'success',
+                    duration: 2000
+                })
+                wepy.$storage.set('token', res.data.access_token)
+                wepy.reLaunch({
+                    url: '/pages/index'
+                })
+            } catch (error) {
+                $Toast({
+                    content: error.message,
+                    type: 'error'
+                })
+                this.loading = false
+                this.$apply()
+            }
         },
         bindGetUserInfo(e) {
-            console.log(e.detail.userInfo)
+            wepy.$storage.set('userInfo', e.detail.userInfo)
         }
     }
 
@@ -43,7 +79,7 @@ export default class LoginPage extends wepy.page {
 .login-page {
     padding: 32rpx;
     .title {
-        margin-top: 20rpx;
+        margin-top: 40rpx;
         font-size: 48rpx;
         font-weight: 500;
     }
