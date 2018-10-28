@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="59px" height="64px" viewBox="0 0 59 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>钉</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M24.993398,9.2383934 L18.9868366,9.2383934 L23.4195029,4.80847581 C26.3776202,1.8513247 30.2536238,0.14651668 34.3333176,0.00809756701 C38.4833553,-0.123409124 42.3146256,1.35055815 45.1248839,4.16007358 C50.6677151,9.70767607 50.6706176,18.9203982 45.1335916,25.1380789 C45.0728943,25.2209427 45.0063066,25.3070492 44.9209377,25.379075 L44.6556112,25.6511342 C44.6269272,25.679808 44.6018288,25.7097618 44.5764742,25.7394596 C44.5452292,25.7761552 44.5128744,25.8142162 44.475995,25.8510824 C44.4468842,25.8798415 44.4194808,25.898104 44.3995045,25.9113314 C44.3944677,25.9146596 44.3893456,25.9178172 44.384565,25.9215721 L19.9314156,50.5849223 C17.7282153,52.7874247 14.793233,54 11.6664267,54 C8.53970589,54 5.60711388,52.7897288 3.40886503,50.5922614 C1.21061619,48.3944526 -8.8817842e-16,45.4629031 -8.8817842e-16,42.3376351 C-8.8817842e-16,39.212111 1.21061619,36.2806468 3.40886503,34.0832647 L16.1118408,21.3848046 C16.9448704,20.5593249 18.2931866,20.5596662 19.1181062,21.3848046 C19.9431111,22.2173674 19.942855,23.5652043 19.1180208,24.3900013 L6.41513039,37.0884614 C5.01977593,38.4833199 4.25128521,40.3473696 4.25128521,42.3376351 C4.25128521,44.3321674 5.01977593,46.1987773 6.41513039,47.5937211 C7.817229,48.9885796 9.68475877,49.7569678 11.673427,49.7569678 C13.6641441,49.7569678 15.528942,48.9886649 16.9244672,47.5937211 L41.6807616,22.6279311 C43.7623111,20.4431791 44.956878,17.6368212 45.0415639,14.7288251 C45.1262498,11.8202316 44.0880788,9.13420108 42.1186186,7.16527028 C40.1375482,5.18481877 37.4243542,4.14983295 34.477591,4.25078844 C31.4780698,4.3516586 28.6185535,5.61458366 26.4257683,7.80693076 L24.993398,9.2383934 Z" id="path-1"></path>
+        <filter x="-20.3%" y="-9.3%" width="140.6%" height="137.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <filter x="-12.2%" y="-1.9%" width="124.3%" height="122.2%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="0.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.847058824   0 0 0 0 0.62745098  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="100%" y1="50%" x2="50%" y2="50%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="医院名片" transform="translate(-641.000000, -21.000000)">
+            <g id="钉" transform="translate(646.000000, 21.000000)">
+                <g id="Combined-Shape">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#00BDA0" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-1"></use>
+                </g>
+                <rect id="Rectangle-6" fill="url(#linearGradient-4)" x="15.3" y="9.9" width="26.1" height="6.3"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,145 @@
+<template>
+    <view class="course-component">
+        <view class="container">
+            <view class="title-container">
+                <view class="text">
+                    今日课表
+                </view>
+            </view>
+            <image class="ding" src="/icon/ding.svg"></image>
+            <view wx:if="{{ loaded }}" style="width: 100%;">
+                <view style="width: 100%;" wx:for="{{ courses }}" wx:key="id" >
+                    <view class="course">
+                        <view class="left">
+                            <view class="name">
+                                {{ item.name }}
+                            </view>
+                            <view class="time">
+                                {{ item.time }} {{ item.teacher }}
+                            </view>
+                        </view>
+                        <view class="loca">
+                            {{ item.place }}
+                        </view>
+                    </view>
+                    <view class="hr"></view>
+                </view>
+                <view wx:if="{{ !courses.length }}" style="height: 100rpx;">
+                    今日没有课哦~
+                </view>
+            </view>
+            <view style="height: 100rpx;" wx:else>
+                正在加载中...
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import CourseMixin from '../mixins/course';
+export default class Course extends wepy.component {
+    data = {
+        courses: [],
+        loaded: true
+    }
+    mixins = [ CourseMixin ];
+    async onLoad() {
+        try {
+            let courseList = wepy.$storage.get('course')
+            if (!courseList) {
+                this.loaded = false
+                this.$apply()
+                courseList = await this.initCourse()
+                this.loaded = true
+                this.$apply()
+                wepy.$storage.setAsync('course', courseList)
+            }
+            let date = new Date().getDay()
+            if (date == 0)
+                date = 6
+            const courses = courseList[date-1]
+            this.courses = courses
+            this.$apply()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+</script>
+
+<style lang="less">
+.course-component {
+    padding: 30rpx;
+    .hr {
+        height: 1px;
+        width: 100%;
+        background: #eeeeee;
+        margin: 16rpx 0rpx;
+    }
+    .container {
+        padding: 94rpx 30rpx 10rpx 30rpx;
+        position: relative;
+        background-image: linear-gradient(-180deg, #FFFFFF 0%, #FAFAFA 100%);
+        box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.08);
+        border-radius: 12rpx;
+        // height: 300rpx;
+        .ding {
+            position: absolute;
+            height: 60rpx;
+            width: 60rpx;
+            right: 0;
+            top: 0;
+        }
+        .course {
+            width: 100%;
+            // padding: 0rpx 80rpx;
+            font-size: 30rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .left {
+                width: 400rpx;
+                max-width: 400rpx;
+            }
+            .name {
+                line-height: 30rpx;
+                margin-bottom: 8rpx;
+            }
+            .time {
+                font-size: 22rpx;
+                font-weight: 300;
+            }
+            .loca {
+                width: 200rpx;
+                font-size: 24rpx;
+                line-height: 24rpx;
+            }
+        }
+        .title-container {
+            position: absolute;
+            left: 0;
+            top: 10rpx;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 200rpx;
+            height: 60rpx;
+            border-radius: 0rpx 40rpx 40rpx 0rpx;
+            background: #f7f7f7;
+            font-size: 30rpx;
+            .text::before {
+                content:" ";
+                display:inline-block;
+                width: 16rpx;
+                height: 16rpx;
+                position:absolute;
+                top: 50% - 10rpx;
+                left: 10rpx;
+                border-radius: 8rpx;
+                background: #fe8f3e;
+            }
+        }
+    }
+}
+</style>

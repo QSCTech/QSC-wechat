@@ -11,9 +11,7 @@
             </block>
         </view>
         <view class="course">
-            <view class="title">
-
-            </view>
+            <course></course>
         </view>
         <view class="ecard">
 
@@ -23,6 +21,8 @@
 
 <script>
 import wepy from 'wepy'
+import Course from '../components/course'
+
 export default class IndexPage extends wepy.page {
     config = {
         'usingComponents': {
@@ -30,6 +30,9 @@ export default class IndexPage extends wepy.page {
             "i-toast": "iview/toast/index",
             "i-avatar": "iview/avatar/index"
         },
+    }
+    components = {
+        course: Course
     }
     async initEcard() {
         try {
@@ -43,7 +46,9 @@ export default class IndexPage extends wepy.page {
         }
     }
     async onLoad() {
-        this.initEcard()
+        const ecard = wepy.$storage.get('ecard')
+        if (!ecard)
+            this.initEcard()
     }
 
     data = {
