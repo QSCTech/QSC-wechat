@@ -31,7 +31,19 @@ export default class IndexPage extends wepy.page {
             "i-avatar": "iview/avatar/index"
         },
     }
+    async initEcard() {
+        try {
+            const res = await wepy.$http({
+                url: '/ecard/balance',
+                method: 'get'
+            })
+            wepy.$storage.setAsync('ecard', res.data)
+        } catch (error) {
+            
+        }
+    }
     async onLoad() {
+        this.initEcard()
     }
 
     data = {
@@ -62,7 +74,7 @@ export default class IndexPage extends wepy.page {
             icon: 'course'
         },
         {
-            id: 'card',
+            id: 'ecard',
             name: '校园卡',
             icon: 'card'
         },

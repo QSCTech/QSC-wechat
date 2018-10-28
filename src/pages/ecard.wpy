@@ -1,0 +1,114 @@
+<template>
+    <view class="ecard-page">
+        <view class="title">
+            卡包
+        </view>
+        <view class="card">
+            <view class="info">
+                <image style="height: 120rpx; width: 328rpx;" src="{{src}}"></image>
+                <view class="text">
+                    浙大校园卡
+                </view>
+            </view>
+            <view class="money">
+                ￥{{ balance }}
+            </view>
+            <view class="id">
+                ID: {{ card_id }}
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class MyPage extends wepy.page {
+    config = {
+        'usingComponents': {
+            'i-button': 'iview/button/index',
+            "i-input": "iview/input/index",
+            "i-panel": "iview/panel/index",
+            "i-avatar": "iview/avatar/index",
+            "i-cell-group": "iview/cell-group/index",
+            "i-cell": "iview/cell/index",
+            "i-icon": "iview/icon/index"
+        },
+        "navigationBarTitleText": "校园卡",
+        // "navigationBarBackgroundColor": "#003F88",
+        // "navigationBarTextStyle": 'white',
+    }
+    data = {
+        src: '/icon/ZJUlogo.png',
+        balance: 0.0,
+        card_id: "",
+        daycostamt: 0.0,
+    }
+    async onLoad() {
+        try {
+            const store = wepy.$storage.get('ecard')
+            if (store) {
+                this.balance = store.balance
+                this.card_id = store.card_id
+                this.daycostamt = store.daycostamt
+            }
+            const res = await wepy.$http({
+                url: '/ecard/balance',
+                method: 'get'
+            })
+            this.balance = res.data.balance
+            this.card_id = res.data.card_id
+            this.daycostamt = res.data.daycostamt
+            wepy.$storage.setAsync('ecard', res.data)
+            this.$apply()
+        } catch (error) {
+            
+        }
+    }
+}
+</script>
+
+
+<style lang="less">
+.ecard-page {
+    .title {
+        margin: 0.5rem 1rem;
+        color: #888;
+        font-size: 0.8rem;
+    }
+    .card {
+        background: #123E84;
+        height: 308rpx;
+        margin: 0 30rpx;
+        border-radius: 12rpx;
+        box-shadow: 4rpx 4rpx 20rpx #123E84;
+        padding: 10rpx 10rpx 10rpx 10rpx;
+        position: relative;
+        .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            font-size: 30rpx;
+            font-weight: 300;
+            .text {
+                margin-right: 20rpx;
+            }
+        }
+        .money {
+            margin: -10rpx 0rpx 0rpx 0rpx;
+            text-align: center;
+            vertical-align:middle;
+            color: #ffffff;
+            font-size: 90rpx;
+        }
+        .id {
+            position: absolute;
+            left: 20rpx;
+            bottom: 10rpx;
+            font-size: 26rpx;
+            color: #ffffff;
+            font-weight: 300;
+        }
+    }
+}
+</style>
