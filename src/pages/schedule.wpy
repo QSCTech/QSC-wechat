@@ -157,7 +157,10 @@ export default class SchedulePage extends wepy.page {
                 text-align: center;
             }
             .id {
-                font-size: 20rpx;
+                font-size: 23rpx;
+            }
+            .teacher {
+                line-height: 20rpx;
             }
             opacity: .7;
             padding: 5rpx 3rpx;
