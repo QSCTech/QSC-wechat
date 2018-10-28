@@ -1,0 +1,68 @@
+<template>
+    <view class="login-page">
+        <view class="title">
+            登录到求是潮Wechat
+        </view>
+        <form bindsubmit="formSubmit">
+            <view class="form">
+                <view class="section">
+                    <input name="ZJUid" placeholder="请输入学号" />
+                    <input name="password" placeholder="请输入密码" />
+                </view>
+
+                <view class="btn-area">
+                    <button loading="{{ loading }}" formType="submit" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">登录</button>
+                </view>
+            </view>
+        </form>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class LoginPage extends wepy.page {
+    methods = {
+        formSubmit(e) {
+            this.loading = true
+            console.log(e.detail.value)
+        },
+        bindGetUserInfo(e) {
+            console.log(e.detail.userInfo)
+        }
+    }
+
+    data = {
+        loading: false
+    }
+}
+</script>
+
+
+<style lang="less">
+.login-page {
+    padding: 32rpx;
+    .title {
+        margin-top: 20rpx;
+        font-size: 48rpx;
+        font-weight: 500;
+    }
+    .form {
+        margin-top: 60rpx;
+        input {
+            padding: 20rpx 0rpx;
+            border-bottom: 4rpx solid #f7f7f7;
+            font-size: 38rpx;
+            font-weight: 300;
+            margin-bottom: 10rpx;
+        }
+        .btn-area {
+            margin-top: 50rpx;
+            button {
+                background-color: #108ee9;
+                color: #f7f7f7;
+            }
+        }
+    }
+}
+</style>
