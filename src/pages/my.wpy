@@ -1,0 +1,128 @@
+<template>
+    <view class="my-page">
+        <view class="top-container">
+            <view class="avatar">
+                <open-data type="userAvatarUrl"></open-data>
+            </view>
+            <view class="name-container">
+                <view class="name">
+                    {{ name }}
+                </view>
+                <view class="stuid">
+                    {{ ZJUid }}
+                </view>
+            </view>
+
+        </view>
+        <view class="main-container">
+            <i-cell-group>
+                <i-cell is-link>
+                    <!-- <i-icon type="addressbook_fill" size="14" color="#80848f" />  -->
+                    完善信息
+                </i-cell>
+                <i-cell is-link url="/pages/dashboard/index">
+                    <!-- <i-icon type="feedback" size="14" color="#80848f" />  -->
+                    反馈
+                </i-cell>
+                <i-cell is-link url="/pages/dashboard/index">
+                    <!-- <i-icon type="coordinates" size="14" color="#80848f" />  -->
+                    关于求是潮
+                </i-cell>
+                <!-- <i-cell title="开关">
+                    <switch slot="footer" checked />
+                </i-cell> -->
+            </i-cell-group>
+        </view>
+        <view class="action-container">
+            <i-button bind:click="handleClick" type="error" size="large">解绑</i-button>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class MyPage extends wepy.page {
+    config = {
+        'usingComponents': {
+            'i-button': 'iview/button/index',
+            "i-input": "iview/input/index",
+            "i-panel": "iview/panel/index",
+            "i-avatar": "iview/avatar/index",
+            "i-cell-group": "iview/cell-group/index",
+            "i-cell": "iview/cell/index",
+            "i-icon": "iview/icon/index"
+        },
+        // "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#6445C2",
+        "navigationBarTextStyle": 'white',
+    }
+    async onLoad() {
+        try {
+            const res = await wepy.$http({
+                url: '/user/info',
+                method: 'get'
+            })
+            this.ZJUid = res.data.ZJUid
+            this.name = res.data.name
+            this.$apply()
+        } catch (error) {
+            
+        }
+    }
+    data = {
+        ZJUid: '',
+        name: ''
+    }
+}
+</script>
+
+<style lang="less">
+page {
+    background: #f7f7f7 !important;
+}
+.my-page {
+    .top-container {
+        height: 148rpx;
+        background: linear-gradient(to bottom, #6445C2 0, #7773E4 30%, #5D88EE 100%);
+        padding: 30rpx 34rpx;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+        .avatar {
+            height: 130rpx;
+            width: 130rpx;
+            background: #d8d8d8;
+        }
+        .name-container {
+            margin-left: 34rpx;
+            color: #ffffff;
+            .name {
+                font-size: 46rpx;
+                font-weight: 500;
+            }
+            .stuid {
+                font-size: 36rpx;
+                font-weight: 300;
+            }
+        }
+        &::after {
+            content:" ";
+            display:inline-block;
+            width:6px;
+            height:6px;
+            position:absolute;
+            top:50%;
+            right:36rpx;
+            border-width:2px 2px 0 0;
+            border-color:#dddee1;
+            border-style:solid;
+            transform:translateY(-50%) matrix(.71,.71,-.71,.71,0,0);
+        }
+    }
+    .action-container {
+        margin-top: 30rpx;
+    }
+
+}
+</style>

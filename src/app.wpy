@@ -27,7 +27,8 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/schedule',
-      'pages/login'
+      'pages/login',
+      'pages/my'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -58,7 +59,7 @@ export default class extends wepy.app {
           selectedIconPath: 'icon/news@select.png'
         },
         {
-          pagePath: 'pages/index',
+          pagePath: 'pages/my',
           text: '个人中心',
           iconPath: 'icon/tabbar/user.png',
           selectedIconPath: 'icon/user@select.png'

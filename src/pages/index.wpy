@@ -29,7 +29,9 @@ export default class IndexPage extends wepy.page {
             "i-spin": "iview/spin/index",
             "i-toast": "iview/toast/index",
             "i-avatar": "iview/avatar/index"
-        }
+        },
+    }
+    async onLoad() {
     }
 
     data = {
