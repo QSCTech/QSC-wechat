@@ -84,8 +84,13 @@ export default class IndexPage extends wepy.page {
             icon: 'card'
         },
         {
-            id: 'recruit',
-            name: '2018秋纳',
+            id: 'print',
+            name: '云打印',
+            icon: 'print'
+        },
+        {
+            id: 'passport',
+            name: '通行证',
             icon: 'qsc'
         }
         ],

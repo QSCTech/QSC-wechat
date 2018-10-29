@@ -29,7 +29,10 @@ export default class extends wepy.app {
       'pages/schedule',
       'pages/login',
       'pages/my',
-      'pages/ecard'
+      'pages/ecard',
+      'pages/todo',
+      'pages/passport',
+      'pages/bind',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -47,7 +50,7 @@ export default class extends wepy.app {
           selectedIconPath: 'icon/tabbar/home@select.png'
         },
         {
-          pagePath: 'pages/index',
+          pagePath: 'pages/todo',
           iconPath: 'icon/tabbar/schedule.png',
           selectedIconPath: 'icon/tabbar/schedule@select.png'
         },

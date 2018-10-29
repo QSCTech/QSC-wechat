@@ -26,7 +26,7 @@
                 </i-cell>
                 <i-cell is-link url="/pages/dashboard/index">
                     <!-- <i-icon type="coordinates" size="14" color="#80848f" />  -->
-                    关于求是潮
+                    关于我们
                 </i-cell>
                 <!-- <i-cell title="开关">
                     <switch slot="footer" checked />
@@ -83,7 +83,7 @@ page {
 .my-page {
     .top-container {
         height: 148rpx;
-        background: linear-gradient(to bottom, #6445C2 0, #7773E4 30%, #5D88EE 100%);
+        background: linear-gradient(to bottom, #6445C2 0, #7773E4 40%, #5D88EE 100%);
         padding: 30rpx 34rpx;
         display: flex;
         justify-content: flex-start;

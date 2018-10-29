@@ -1,0 +1,120 @@
+<template>
+    <view class="login-page">
+        <view class="title">
+            绑定{{ idname }}
+        </view>
+        <form bindsubmit="formSubmit">
+            <view class="form">
+                <view class="section">
+                    <input name="id" placeholder="请输入{{ idname }}" type="number"/>
+                    <input name="password" placeholder="请输入密码" password="true"/>
+                </view>
+
+                <view class="btn-area">
+                    <button loading="{{ loading }}" formType="submit" >绑定</button>
+                </view>
+            </view>
+        </form>
+        <i-toast id="toast" />
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+const { $Toast } = require('./iview/base/index');
+
+export default class LoginPage extends wepy.page {
+    config = {
+        'usingComponents': {
+            "i-toast": "iview/toast/index"
+        },
+        "navigationBarTitleText": "通行证绑定",
+    }
+    onLoad(options) {
+        this.type = options.type
+        switch (options.type) {
+            case 'print':
+                this.idname = '打印系统账号'
+                break;
+            case 'intl':
+                this.idname = 'INTL ID'
+                break;
+            default:
+                wepy.reLaunch({
+                    url: '/pages/index'
+                })
+                break;
+        }
+    }
+    methods = {
+        async formSubmit(e) {
+            this.loading = true
+            const { code } = await wepy.login()
+            const data = e.detail.value
+            try {
+                const res = await wepy.$http({
+                    url: '/auth/bind',
+                    data: {
+                        ...data,
+                        code
+                    },
+                    method: 'post'
+                })
+                this.loading = false
+                this.$apply()
+                wx.showToast({
+                    title: '绑定成功',
+                    icon: 'success',
+                    duration: 2000
+                })
+                wepy.$storage.set('token', res.data.access_token)
+                wepy.reLaunch({
+                    url: '/pages/index'
+                })
+            } catch (error) {
+                $Toast({
+                    content: error.message,
+                    type: 'error'
+                })
+                this.loading = false
+                this.$apply()
+            }
+        },
+    }
+
+    data = {
+        loading: false,
+        type: '',
+        idname: ''
+    }
+}
+</script>
+
+
+<style lang="less">
+.login-page {
+    padding: 32rpx;
+    .title {
+        margin-top: 40rpx;
+        font-size: 48rpx;
+        font-weight: 500;
+    }
+    .form {
+        margin-top: 60rpx;
+        input {
+            padding: 20rpx 0rpx;
+            border-bottom: 4rpx solid #f7f7f7;
+            font-size: 38rpx;
+            font-weight: 300;
+            margin-bottom: 10rpx;
+        }
+        .btn-area {
+            margin-top: 50rpx;
+            button {
+                background-color: #108ee9;
+                color: #f7f7f7;
+            }
+        }
+    }
+}
+</style>

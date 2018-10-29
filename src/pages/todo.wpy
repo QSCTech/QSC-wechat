@@ -1,0 +1,199 @@
+<style lang="less">
+.todo-page {
+    .top-container {
+        height: 508rpx;
+        background: linear-gradient(to bottom, #6445C2 0, #7773E4 40%, #5D88EE 100%);
+        padding: 30rpx 34rpx;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        color: #ffffff;
+        .time-container {
+            margin: 10rpx 0rpx 30rpx 0rpx;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            .time {
+                font-size: 80rpx;
+            }
+            .info {
+                font-size: 40rpx;
+            }
+        }
+        .main-container {
+            margin: 30rpx 0rpx;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            .course {
+                display: flex;
+                justify-content: center;
+                text-align: center;
+                font-size: 60rpx;
+                line-height: 66rpx;
+                font-weight: 500;
+            }
+            .info {
+                text-align: center;
+                margin-top: 10rpx;
+                font-size: 30rpx;
+                font-weight: 300;
+            }
+        }
+    }
+}
+</style>
+
+<template>
+    <view class="todo-page">
+        <view class="top-container">
+            <view class="time-container">
+                <view class="time">
+                    {{hour}}:{{minute}}:{{second}}
+                </view>
+                <view class="info">
+                    即将上课
+                </view>
+            </view>
+            <view class="main-container">
+                <view class="course">
+                    {{ course.name }}
+                </view>
+                <view class="info">
+                    {{ course.teacher }} | {{ course.place }}
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import CourseMixin from '../mixins/course';
+export default class MyPage extends wepy.page {
+    config = {
+        'usingComponents': {
+            'i-button': 'iview/button/index',
+            "i-input": "iview/input/index",
+            "i-panel": "iview/panel/index",
+            "i-avatar": "iview/avatar/index",
+            "i-cell-group": "iview/cell-group/index",
+            "i-cell": "iview/cell/index",
+            "i-icon": "iview/icon/index"
+        },
+        "navigationBarTitleText": "日程",
+        "navigationBarBackgroundColor": "#6445C2",
+        "navigationBarTextStyle": 'white',
+    }
+    data = {
+        courseList: [],
+        hour: '',
+        minute: '',
+        second: '',
+        course: []
+    }
+    mixins = [ CourseMixin ]
+    prase_num(number) {
+        if (number < 10) {
+            return `0${number}`
+        }
+        return `${number}`
+    }
+    calcTimeDiff(cur, tar) {
+        if (tar.hour < cur.hour) {
+            return {
+                status: -1
+            }
+        }
+        if (tar.hour === cur.hour) {
+            if(tar.minute < cur.minute) {
+                return {
+                    status: -1
+                }
+            }
+            if(tar.minute === cur.minute) {
+                if(tar.second < cur.second) {
+                    return {
+                        status: -1
+                    }
+                }
+                // OK
+                return {
+                    status: 0,
+                    hour: 0,
+                    minute: 0,
+                    second: tar.second - cur.second,
+                }
+            }
+            // OK
+            return {
+                status: 0,
+                hour: 0,
+                minute: tar.minute - cur.minute - 1,
+                second: tar.second + (60 - cur.second),
+            }
+        }
+        return {
+            status: 0,
+            hour: tar.hour - cur.hour - 1,
+            minute: tar.minute + (60 - cur.minute),
+            second: tar.second + (60 - cur.second),
+        }
+        console.log(cur, tar)
+    }
+    async onLoad() {
+        try {
+            let courseList = wepy.$storage.get('course')
+            if (!courseList) {
+                this.loaded = false
+                this.$apply()
+                courseList = await this.initCourse()
+                this.loaded = true
+                this.$apply()
+                wepy.$storage.setAsync('course', courseList)
+            }
+            
+            // First get today's course, then next day's course
+            setInterval(() => {
+                const date = new Date();
+                let day = date.getDay()
+                if (day == 0)
+                    day = 6
+                const hour = date.getHours()
+                const minute = date.getMinutes()
+                const second = date.getSeconds()
+                const todayList = courseList[day+1]
+                for(let i = 0; i < todayList.length; i++) {
+                    const cur = todayList[i]
+                    
+                    const res = this.calcTimeDiff({
+                        hour,
+                        minute,
+                        second
+                    }, {
+                        hour: cur.startTime.hour || 0,
+                        minute: cur.startTime.min || 0,
+                        second: cur.startTime.second || 0,
+                    })
+                    if( res.status === -1) {
+                        continue
+                    }
+                    this.hour = this.prase_num(res.hour)
+                    this.minute = this.prase_num(res.minute)
+                    this.second = this.prase_num(res.second)
+                    this.course = cur
+                    this.$apply()
+                    break
+                    // if(cur.startTime.hour)
+                }
+
+            }, 1000)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+</script>
