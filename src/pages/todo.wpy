@@ -133,14 +133,14 @@ export default class MyPage extends wepy.page {
                 status: 0,
                 hour: 0,
                 minute: tar.minute - cur.minute - 1,
-                second: tar.second + (60 - cur.second),
+                second: tar.second + (60 - cur.second - 1),
             }
         }
         return {
             status: 0,
             hour: tar.hour - cur.hour - 1,
-            minute: tar.minute + (60 - cur.minute),
-            second: tar.second + (60 - cur.second),
+            minute: tar.minute + (60 - cur.minute - 1),
+            second: tar.second + (60 - cur.second - 1),
         }
         console.log(cur, tar)
     }
@@ -161,11 +161,11 @@ export default class MyPage extends wepy.page {
                 const date = new Date();
                 let day = date.getDay()
                 if (day == 0)
-                    day = 6
+                    day = 7
                 const hour = date.getHours()
                 const minute = date.getMinutes()
                 const second = date.getSeconds()
-                const todayList = courseList[day+1]
+                const todayList = courseList[day-1]
                 for(let i = 0; i < todayList.length; i++) {
                     const cur = todayList[i]
                     

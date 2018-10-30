@@ -58,12 +58,16 @@ export default class MyPage extends wepy.page {
     }
     async onLoad() {
         try {
-            const res = await wepy.$http({
-                url: '/user/info',
-                method: 'get'
-            })
-            this.ZJUid = res.data.ZJUid
-            this.name = res.data.name
+            let userinfo = wepy.$storage.get("userinfo")
+            if( !userinfo ) {
+                userinfo = (await wepy.$http({
+                    url: '/user/info',
+                    method: 'get'
+                })).data
+                wepy.$storage.setAsync("userinfo", userinfo)
+            }
+            this.ZJUid = userinfo.ZJUid
+            this.name = userinfo.name
             this.$apply()
         } catch (error) {
             
