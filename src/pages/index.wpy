@@ -89,7 +89,7 @@ export default class IndexPage extends wepy.page {
             icon: 'print'
         },
         {
-            id: 'passport',
+            id: 'account',
             name: '通行证',
             icon: 'passport'
         },

@@ -6,7 +6,7 @@
         <form bindsubmit="formSubmit">
             <view class="form">
                 <view class="section">
-                    <input name="username" placeholder="请输入{{ idname }}" type="number"/>
+                    <input name="username" placeholder="请输入{{ idname }}"/>
                     <input name="password" placeholder="请输入密码" password="true"/>
                 </view>
 
@@ -54,7 +54,7 @@ export default class LoginPage extends wepy.page {
             try {
                 const res = await wepy.$http({
                     method: 'post',
-                    url: `/${this.type}/bind`,
+                    url: `/account/${this.type}`,
                     data
                 })
                 wx.navigateBack({

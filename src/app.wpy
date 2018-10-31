@@ -31,8 +31,9 @@ export default class extends wepy.app {
       'pages/my',
       'pages/ecard',
       'pages/todo',
-      'pages/passport',
+      'pages/account',
       'pages/bind',
+      'pages/print',
     ],
     window: {
       backgroundTextStyle: 'light',
