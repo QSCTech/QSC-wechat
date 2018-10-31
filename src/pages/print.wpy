@@ -1,0 +1,16 @@
+<template>
+    <view class="print-page">
+        功能尚未开放，敬请期待
+    </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class MyPage extends wepy.page {
+    
+}
+</script>
+
+
+<style lang="less">
+
+</style>
