@@ -11,11 +11,11 @@
             </view>
             <view class="money">
                 <text wx:if="{{ ZJUid }}">{{ ZJUid }}</text>
-                <text wx:else>点击绑定</text>
+                <text wx:elif="{{ loaded }}">点击绑定</text>
             </view>
             <view class="id">
                 <text wx:if="{{ ZJUid }}">状态: 已绑定</text>
-                <text wx:else>状态: 未绑定</text>
+                <text wx:elif="{{ loaded }}">状态: 未绑定</text>
             </view>
         </navigator>
         <view class="hr">
@@ -29,11 +29,11 @@
             </view>
             <view class="money">
                 <text wx:if="{{ INTLid }}">{{ INTLid }}</text>
-                <text wx:else>点击绑定</text>
+                <text wx:elif="{{ loaded }}">点击绑定</text>
             </view>
             <view class="id">
                 <text wx:if="{{ INTLid }}">状态: 已绑定</text>
-                <text wx:else>状态: 未绑定</text>
+                <text wx:elif="{{ loaded }}">状态: 未绑定</text>
             </view>
         </navigator>
         <view class="hr">
@@ -49,11 +49,11 @@
             </view>
             <view class="money">
                 <text wx:if="{{ PRINTid }}">{{ PRINTid }}</text>
-                <text wx:else>点击绑定</text>
+                <text wx:elif="{{ loaded }}">点击绑定</text>
             </view>
             <view class="id">
                 <text wx:if="{{ PRINTid }}">状态: 已绑定</text>
-                <text wx:else>状态: 未绑定</text>
+                <text wx:elif="{{ loaded }}">状态: 未绑定</text>
             </view>
         </navigator>
 
@@ -71,7 +71,8 @@ export default class MyPage extends wepy.page {
         srcINTL: '/icon/INTLlogo.png',
         ZJUid: '',
         INTLid: '',
-        PRINTid: ''
+        PRINTid: '',
+        loaded: false
     }
 
     async init() {
@@ -83,10 +84,22 @@ export default class MyPage extends wepy.page {
             this.ZJUid = res.ZJUid
             this.INTLid = (res.INTLid).split('@')[0]
             this.PRINTid = res.PRINTid
+            wepy.$storage.setAsync("account", res)
             this.$apply()
         } catch (error) {
             
         }
+    }
+
+    onLoad() {
+        const account = wepy.$storage.get("account")
+        if (account) {
+            this.ZJUid = account.ZJUid
+            this.INTLid = (account.INTLid).split('@')[0]
+            this.PRINTid = account.PRINTid
+        }
+        this.loaded = true
+        this.apply()
     }
 
     async onShow() {

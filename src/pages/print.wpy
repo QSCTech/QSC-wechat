@@ -1,12 +1,64 @@
 <template>
     <view class="print-page">
-        功能尚未开放，敬请期待
+        <!-- <view class="print-form">
+            <web-view src="https://mp.weixin.qq.com/"></web-view>
+        </view> -->
+        <picker bindchange="paperidChange" value="{{paperidIndex}}" range="{{paperidArray}}" range-key="name">
+                    <view class="picker">
+            当前选择：{{ paperidArray[paperidIndex].name }}
+            </view>
+        </picker>
+        <picker bindchange="doubleChange" value="{{doubleIndex}}" range="{{doubleArray}}" range-key="name">
+                    <view class="picker">
+            当前选择：{{ doubleArray[doubleIndex].name }}
+            </view>
+        </picker>
     </view>
 </template>
 <script>
 import wepy from 'wepy'
 export default class MyPage extends wepy.page {
-    
+    data = {
+        paperidArray: [
+            {
+                id: 0,
+                name: 'A4',
+                value: 'A4'
+            },
+            {
+                id: 1,
+                name: 'A3',
+                value: 'A3'
+            }
+        ],
+        doubleArray: [
+            {
+                id: 0,
+                name: '单面',
+                value: 'dupnone'
+            },
+            {
+                id: 1,
+                name: '双面(长边翻转)',
+                value: 'dupvertical'
+            },
+            {
+                id: 2,
+                name: '双面(短边翻转)',
+                value: 'duphorizontal'
+            }
+        ],
+        paperidIndex: 0,
+        doubleIndex: 0,
+    }
+    methods = {
+        paperidChange: (e) => {
+            this.paperidIndex = e.detail.value
+        },
+        doubleChange: (e) => {
+            this.doubleIndex = e.detail.value
+        }
+    }
 }
 </script>
 
