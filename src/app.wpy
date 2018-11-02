@@ -82,7 +82,6 @@ export default class extends wepy.app {
   async onLaunch() {
     wepy.$http = http;
     wepy.$storage = { set, get, setAsync };
-
     await this.login()
   }
 
