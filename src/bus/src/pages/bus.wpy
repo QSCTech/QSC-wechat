@@ -1,0 +1,71 @@
+<style  src="bus.wxss"></style>
+<template src="bus.wxml"></template>
+
+
+<script>
+import wepy from 'wepy'
+
+const headerImage = require('./imageBase64/header.js')
+const Mydata = require('./imageBase64/exportExmapleData.js')
+let stations = [' 紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
+let StoreRow = []
+
+export default class extends wepy.page {
+  config = {
+    navigationBarTitleText: 'BUS'
+  }
+
+  data = {
+    startStation: ' 紫金港校区',
+    endStation: '海宁国际校区',
+    enumerated: '',
+    test: '',
+    time: 'ok',
+    date: 'ok',
+    msg: headerImage.postBase[0]
+  }
+
+  methods = {
+    TapExchange() {
+      let tmp1, tmp2
+      tmp1 = this.data.startStation
+      tmp2 = this.data.endStation
+      this.startStation = tmp2
+      this.endStation = tmp1
+    },
+    changeStartStation() {
+      let i
+      for (i = 0; i < stations.length; i++) {
+        if (stations[i][1] === this.data.startStation[1]) break
+      }
+      this.test = StoreRow
+      this.startStation = stations[(i + 1) % 4]
+    },
+    changeEndStation() {
+      let i
+      for (i = 0; i < stations.length; i++) {
+        if (stations[i][1] === this.data.endStation[1]) break
+      }
+      this.test = StoreRow
+      this.endStation = stations[(i + 1) % 4]
+    }
+  }
+
+  onLoad() {
+    StoreRow = []
+    for (let i = 0; i < Mydata.TestMessage['rows'].length; i++) {
+      if (Mydata.TestMessage['rows'][i]['esite'][1] === this.data.endStation[1]) {
+        StoreRow.push(Mydata.TestMessage['rows'][i])
+      }
+    }
+    let numOfTabs = StoreRow.length
+    let arr = []
+    for (let i = 0; i < numOfTabs; i++) {
+      arr.push(i)
+    }
+
+    this.test = StoreRow
+    this.enumerated = arr
+  }
+}
+</script>
