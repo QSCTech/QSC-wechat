@@ -64,7 +64,7 @@ export default class IndexPage extends wepy.page {
             icon: 'grade'
         },
         {
-            id: 'score',
+            id: 'bus',
             name: '校车',
             icon: 'bus'
         },
