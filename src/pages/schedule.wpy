@@ -6,7 +6,6 @@
             <view class="daytime-col">
                 <view class="kb-mon kb-date">
                     Hour
-                    <!-- <block wx:if="{{week != '*'}}"><text>{{dates[week-1][0].month}}</text><text>月</text></block> -->
                 </view>
                 <view class="mg-t">8</view>
                 <view><text>9</text></view>
