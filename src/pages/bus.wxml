@@ -1,6 +1,6 @@
 <!--logs.wxml-->
 
-<view id="header" src="./imageBase64/header.json" style="background-image:url({{msg}})">
+<view id="header" src="../icon/imageBase64/header.json" style="background-image:url({{msg}})">
 <text id="headerText">BUS</text>
 </view>
 
@@ -8,7 +8,7 @@
 <text id="LeftStationText" class="StationText" @tap="changeStartStation">{{startStation}}</text>
 <view  class="whiteTab"  id="chooseStation">
 <button id="PressExchange" @tap="TapExchange"  >
-<image src="./images/exchange.png " class="exchange" >
+<image src="../icon/images/exchange.png " class="exchange" >
 </image>
 </button>
 </view>

@@ -7,7 +7,7 @@ import wepy from 'wepy'
 
 const headerImage = require('./imageBase64/header.js')
 const Mydata = require('./imageBase64/exportExmapleData.js')
-let stations = [' 紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
+let stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
 
 export default class extends wepy.page {
@@ -16,7 +16,7 @@ export default class extends wepy.page {
   }
 
   data = {
-    startStation: ' 紫金港校区',
+    startStation: '紫金港校区',
     endStation: '海宁国际校区',
     enumerated: '',
     test: '',
@@ -36,25 +36,30 @@ export default class extends wepy.page {
     changeStartStation() {
       let i
       for (i = 0; i < stations.length; i++) {
-        if (stations[i][1] === this.data.startStation[1]) break
+        if (stations[i][0] === this.data.startStation[0]) break
       }
-      this.test = StoreRow
       this.startStation = stations[(i + 1) % 4]
     },
     changeEndStation() {
       let i
       for (i = 0; i < stations.length; i++) {
-        if (stations[i][1] === this.data.endStation[1]) break
+        if (stations[i][0] === this.data.endStation[0]) break
       }
-      this.test = StoreRow
       this.endStation = stations[(i + 1) % 4]
     }
   }
-
-  onLoad() {
+  watch = {
+    startStation () {
+      this.modMainArray()
+    },
+    endStation () {
+      this.modMainArray()
+    }
+  }
+  modMainArray() {
     StoreRow = []
     for (let i = 0; i < Mydata.TestMessage['rows'].length; i++) {
-      if (Mydata.TestMessage['rows'][i]['esite'][1] === this.data.endStation[1]) {
+      if (Mydata.TestMessage['rows'][i]['esite'][0] === this.data.endStation[0]) {
         StoreRow.push(Mydata.TestMessage['rows'][i])
       }
     }
@@ -63,9 +68,11 @@ export default class extends wepy.page {
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
-
     this.test = StoreRow
     this.enumerated = arr
+  }
+  onLoad() {
+    this.modMainArray()
   }
 }
 </script>
