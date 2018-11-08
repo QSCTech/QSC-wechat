@@ -105,6 +105,12 @@ export default class extends wepy.page {
     this.test = StoreRow
     this.enumerated = arr
   }
+  async init() {
+    wepy.$http({
+      url: '/intlbus/bus/2018-11-09',
+      method: 'get'
+    })
+  }
   onLoad() {
     this.modMainArray()
   }
