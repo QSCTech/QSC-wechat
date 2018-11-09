@@ -1,4 +1,4 @@
-const prefix = "zjuqsc.dev."
+const prefix = "zjuqsc.prod."
 
 const set = (key, value) => {
     return wx.setStorageSync(prefix + key, value)
