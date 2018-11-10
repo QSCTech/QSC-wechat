@@ -49,7 +49,7 @@
 
 <template>
     <view class="todo-page">
-        <view class="top-container">
+        <view wx:if="{{ course }}" class="top-container">
             <view class="time-container">
                 <view class="time">
                     {{hour}}:{{minute}}:{{second}}
