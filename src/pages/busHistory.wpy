@@ -1,0 +1,234 @@
+<template>
+<view>
+  <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
+    <view class="try" style="top:{{idx*250+50}}rpx" id="{{test[idx]['classid']}}" >
+      <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
+        {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
+      </view>
+      <view wx:else class="smallSite">
+        {{test[idx]['ssite']}}--{{test[idx]['esite']}}
+      </view> 
+      <view wx:if="{{test[idx]['ptime']!='-'}}" class="bigTime">
+        {{test[idx]['stime']}}--{{test[idx]['ptime']}}--{{test[idx]['etime']}}
+      </view>
+      <view wx:else class="bigTime">
+        {{test[idx]['stime']}}--{{test[idx]['etime']}}
+      </view>
+      <view>
+        <button class="appoint" @tap="deleteAppointment">
+      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
+      <image src="../icon/images/plus.png" id="plus">
+      </button>
+      </view>
+    </view>
+  </view>
+
+<view class="center" id="bottom">
+<view class="center" id="history">
+  <view class="whiteTab" id="appoi" @tap="back"  >
+    返回
+  </view>
+</view>
+</view>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class extends wepy.page {
+  config = {
+    navigationBarTitleText: 'BUS'
+  }
+
+  data = {
+    startStation: '紫金港校区',
+    endStation: '海宁国际校区',
+    enumerated: '',
+    test: '',
+    time: 'ok',
+    date: 'ok',
+    businfo: {}
+  }
+  methods = {
+    back: function (event) {
+      wx.navigateTo({
+        url: '/pages/bus',
+        success: function (res) {
+          console.log(res)
+        },
+        fail: function(res) {
+          console.log(res)
+        }
+      })
+    },
+    async deleteAppointment() {
+      let MsgSend={}
+      MsgSend['code'] = 0
+      MsgSend['message'] = 'ok'
+      MsgSend['data'] = this.StoreRow
+      try {
+      await wepy.$http({
+          url: '/book',
+          data: MsgSend,
+          method: 'patch'
+    })
+    this.$apply()
+    } catch (error) {
+      alert('失败')        
+    }
+
+    }
+  }
+
+  modMainArray() {
+    let StoreRow = []
+    for (let i = 0; i < this.businfo['rows'].length; i++) {
+      if (this.businfo['rows'][i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo['rows'][i])
+      }
+    }
+    this.$apply()
+    let numOfTabs = StoreRow.length
+    let arr = []
+    for (let i = 0; i < numOfTabs; i++) {
+      arr.push(i)
+    }
+    this.test = StoreRow
+    this.enumerated = arr
+    this.$apply()
+  }
+
+  async onLoad() {
+    this.$apply()
+    try {
+      this.businfo = (await wepy.$http({
+        url: '/book',
+        method: 'get'
+      })).data
+      this.$apply()
+    } catch (error) {
+      alert('当前日期无班车') 
+    }
+    this.modMainArray()
+    this.$apply()
+  }
+}
+</script>
+<style>
+page {
+  display: block;
+  min-height: 100%;
+  background-color:rgb(42, 60, 85);
+  z-index: -999;
+}
+
+.whiteTab{
+  text-align: center;
+  width:90%;
+  border-radius: 30rpx;
+  background-color: white;
+  background-size:1000px 500px;
+  position:absolute;
+
+}
+
+.center{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+}
+
+
+.exchange{
+  margin-top:25rpx;
+  height: 100rpx;
+  width:100rpx;
+}
+
+.StationText{
+position:relative;
+  font-size: 35rpx;
+  top:100rpx;
+  z-index: 999;
+border-bottom: 2px rgb(96, 102, 116) solid;
+}
+
+
+#chooseBus{
+  margin-top: 200rpx;
+  height:150rpx;
+  text-align: center;
+  align-items: center;
+}
+
+.try{
+text-align: center;
+  width:90%;
+  border-radius: 30rpx;
+  background-color:#F0F8FF;
+  background-size:1000px 500px;
+  position:absolute;
+  margin-top: 200rpx;
+  height:150rpx;
+  align-items: center;
+  vertical-align: center;
+}
+
+.smallSite{
+  font-size: 25rpx;
+  position:relative;
+}
+
+.bigTime{
+  font-size: 50rpx;
+}
+
+#date{
+  position: relative;
+  top:190rpx;
+  vertical-align: center;
+}
+
+#plus{
+  height: 45rpx;
+  width:45rpx;
+  border:none;
+}
+.appoint{
+  height: 55rpx;
+  width:50%;
+  border:none;
+  background-color:#F0F8FF;
+  border:none;
+  vertical-align: center;
+  font-size:30rpx;
+  position:relative;
+  align-content: center;
+}
+
+#history{
+  background-color: rgb(190, 236, 245);
+  width:40%;
+  border-radius:4rpx;
+  position:absolute;
+  bottom:10%;
+}
+
+#appoi{
+  background-color: rgb(190, 236, 245);
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+  border-radius:5rpx;
+  font-size: 45rpx;
+}
+
+#botttom{
+  position:relative;
+}
+
+
+</style>
