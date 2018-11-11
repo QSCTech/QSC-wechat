@@ -9,7 +9,6 @@
                     <input name="ZJUid" placeholder="请输入学号" type="number"/>
                     <input name="password" placeholder="请输入密码" password="true"/>
                 </view>
-
                 <view class="btn-area">
                     <button loading="{{ loading }}" formType="submit" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">登录</button>
                 </view>
