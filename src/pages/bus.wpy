@@ -194,9 +194,9 @@ export default class extends wepy.page {
   }
   modMainArray() {
     StoreRow = []
-    for (let i = 0; i < Mydata.TestMessage['rows'].length; i++) {
-      if (Mydata.TestMessage['rows'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(Mydata.TestMessage['rows'][i])
+    for (let i = 0; i < this.businfo['data'].length; i++) {
+      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo['data'][i])
       }
     }
     const numOfTabs = StoreRow.length
