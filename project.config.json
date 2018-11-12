@@ -9,7 +9,7 @@
 	},
 	"compileType": "miniprogram",
 	"appid": "wxdb99a92837c753dd",
-	"projectname": "aa",
+	"projectname": "qsc-wechat",
 	"miniprogramRoot": "dist/",
 	"condition": {}
 }

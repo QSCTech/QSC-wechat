@@ -76,21 +76,21 @@
 import wepy from 'wepy'
 
 const headerImage = require('../icon/imageBase64/header.js')
-let stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
+const stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
 const date = new Date()
 const years = []
 const months = []
 const days = []
-
-for (let i = 2018; i <= (date.getFullYear() + 1); i++) {
+let i
+for (i = date.getFullYear(); i <= (date.getFullYear() + 1); i++) {
   years.push(i)
 }
-for (let i = 1; i <= 12; i++) {
-  months.push(i)
+for (i = 1; i <= 12; i++) {
+  months.push((date.getMonth()+ i - 1) % 12 )
 }
-for (let i = 1; i <= 31; i++) {
-  days.push(i)
+for (i = 1; i <= 31; i++) {
+  days.push((date.getDate()+ i - 1) % 31)
 }
 
 export default class extends wepy.page {
@@ -176,7 +176,6 @@ export default class extends wepy.page {
           data: MsgSend,
           method: 'post'
     })
-    this.$apply()
     } catch (error) {
       alert('预约失败')        
     }
@@ -200,8 +199,8 @@ export default class extends wepy.page {
         StoreRow.push(Mydata.TestMessage['rows'][i])
       }
     }
-    let numOfTabs = StoreRow.length
-    let arr = []
+    const numOfTabs = StoreRow.length
+    const arr = []
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
