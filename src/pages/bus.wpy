@@ -39,7 +39,7 @@
   </view>
 
   <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*190+230}}rpx" id="{{test[idx]['classid']}}">
+    <view class="try" style="top:{{idx*190+230}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['classid']}}">
       <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
         {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
       </view>
@@ -79,6 +79,7 @@ const navigateText='校车预约'
 const headerImage = require('../icon/imageBase64/header.js')
 const stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
+let storeid = []
 const date = new Date()
 const years = []
 const months = []
@@ -114,7 +115,8 @@ export default class extends wepy.page {
     days: days,
     day: date.getDate(),
     value: [9999, 11, 11],
-    businfo:{}
+    businfo:{},
+    storeID:[]
   }
 
   methods = {
@@ -166,11 +168,17 @@ export default class extends wepy.page {
       })
       }     
     },
-    async startAppointment() {
+    async startAppointment: function(e) {
+      const val = e.detail.value
       let MsgSend={}
       MsgSend['code'] = 0
       MsgSend['message'] = 'ok'
-      MsgSend['data'] = this.StoreRow
+      MsgSend['data'] = {}
+      for(let i=0; i < this.test.length ;i++){
+        if(this.test[i]['classid'] == val) {
+          MsgSend['data'].push(this.test[i])
+        }
+      }
       try {
       await wepy.$http({
           url: '/reserve',
@@ -195,9 +203,12 @@ export default class extends wepy.page {
   }
   modMainArray() {
     StoreRow = []
+    storeid = []
+    this.data.storeID=[]
     for (let i = 0; i < this.businfo['data'].length; i++) {
       if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
         StoreRow.push(this.businfo['data'][i])
+        this.storeID.push(this.businfo['data'][i]['classid'])
       }
     }
     const numOfTabs = StoreRow.length
@@ -212,17 +223,24 @@ export default class extends wepy.page {
   async onLoad() {
     this.modMainArray()
     this.$apply()
-    thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
-    let urlTmp = '/bus/'+ thisDate
+    let urlTmp
+    if (date.getDate() >= 10){
+      thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
+      urlTmp = '/bus/'+ thisDate
+    }
+    if (date.getDate() < 10){
+      thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + '0' + date.getDate().toString()
+      urlTmp = '/bus/'+ thisDate
+    }
     try {
     this.businfo = (await wepy.$http({
         url: urlTmp,
         method: 'get'
     })).data
-    this.$apply()
     } catch (error) {
       alert('当前日期无班车')        
     }
+    this.$apply()
   }
 }
 </script>
