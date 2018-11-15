@@ -226,8 +226,14 @@ export default class extends wepy.page {
   }
 }
 </script>
-
 <style>
+page {
+  display: block;
+  min-height: 100%;
+  background-color:rgb(42, 60, 85);
+}</style>
+
+<style scoped>
 page {
   display: block;
   min-height: 100%;
@@ -272,11 +278,11 @@ page {
   display: flex;
   text-align: center;
   justify-content: center;
-   vertical-align: center;
+  vertical-align: center;
 }
 
  #PressExchange{
-   height: 150rpx;
+  height: 150rpx;
   width:200rpx;
   border:none;
   color: rgb(190, 236, 245);
@@ -305,9 +311,7 @@ border-bottom: 2px rgb(96, 102, 116) solid;
 }
 
 #RightStationText{
-  
   left:120rpx;
-  
 }
 
 #chooseBus{
