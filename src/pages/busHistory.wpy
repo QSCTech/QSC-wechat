@@ -62,12 +62,18 @@ export default class extends wepy.page {
         }
       })
     },
-    async deleteAppointment() {
-      let MsgSend={}
-      MsgSend['code'] = 0
-      MsgSend['message'] = 'ok'
-      MsgSend['data'] = this.StoreRow
-      try {
+    async deleteAppointment: function(e) {
+    const val = e.detail.value
+    let MsgSend={}
+    MsgSend['code'] = 0
+    MsgSend['message'] = 'ok'
+    MsgSend['data'] = {}
+    for(let i=0; i < this.test.length ;i++){
+      if(this.test[i]['bookid'] == val) {
+        MsgSend['data'].push(this.test[i])
+      }
+    }
+    try {
       await wepy.$http({
           url: '/book',
           data: MsgSend,
