@@ -35,6 +35,7 @@ export default class extends wepy.app {
       'pages/bind',
       'pages/print',
       'pages/bus',
+      'pages/busHistory'
     ],
     window: {
       backgroundTextStyle: 'light',

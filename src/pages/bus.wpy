@@ -8,14 +8,37 @@
     <text id="LeftStationText" class="StationText" @tap="changeStartStation">{{startStation}}</text>
     <view  class="whiteTab"  id="chooseStation">
       <button id="PressExchange" @tap="TapExchange">
-        <image src="../icon/images/exchange.png " class="exchange"></image>
+        <image src="../icon/images/exchange.png " class="exchange">
       </button>   
     </view>
     <text id="RightStationText" class="StationText" @tap="changeEndStation">{{endStation}}</text>
   </view>
 
+  <view id="date" class="center">
+    <view class="center">
+     {{year}}年{{month}}月{{day}}日
+    </view>
+    <picker-view indicator-style="height: 50px;" style="width: 90%; height: 50px;" value="{{value}}" bindchange="dateChange" class="whiteTab">
+      <picker-view-column>
+        <view wx:for="{{years}}" style="line-height:30px">
+          {{item}}年
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{months}}" style="line-height: 30px">
+          {{item}}月
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{days}}" style="line-height: 30px">
+          {{item}}日
+        </view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+
   <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*190+230}}rpx" id="{{test[idx]['classid']}}" src="./bus.js" >
+    <view class="try" style="top:{{idx*190+230}}rpx" id="{{test[idx]['classid']}}">
       <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
         {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
       </view>
@@ -29,10 +52,21 @@
         {{test[idx]['stime']}}--{{test[idx]['etime']}}
       </view>
       <view>
-      {{test[idx]['booknum']}}/{{test[idx]['busnum']}}
+        <button class="appoint" @tap="startAppointment">
+      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
+      <image src="./images/plus.png" id="plus">
+      </button>
       </view>
     </view>
   </view>
+
+<view class="center" id="bottom">
+<view class="center" id="history">
+  <view class="whiteTab" id="appoi" @tap="navigateHistory" >
+    查看历史预约
+  </view>
+</view>
+</view>
 
 </view>
 </template>
@@ -42,9 +76,22 @@
 import wepy from 'wepy'
 
 const headerImage = require('../icon/imageBase64/header.js')
-const Mydata = require('../icon/imageBase64/exportExmapleData.js')
-let stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
+const stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
+const date = new Date()
+const years = []
+const months = []
+const days = []
+let i
+for (i = date.getFullYear(); i <= (date.getFullYear() + 1); i++) {
+  years.push(i)
+}
+for (i = 1; i <= 12; i++) {
+  months.push((date.getMonth()+ i - 1) % 12 )
+}
+for (i = 1; i <= 31; i++) {
+  days.push((date.getDate()+ i - 1) % 31)
+}
 
 export default class extends wepy.page {
   config = {
@@ -58,7 +105,15 @@ export default class extends wepy.page {
     test: '',
     time: 'ok',
     date: 'ok',
-    msg: headerImage.postBase[0]
+    msg: headerImage.postBase[0],
+    years: years,
+    year: date.getFullYear(),
+    months: months,
+    month: date.getMonth(),
+    days: days,
+    day: date.getDate(),
+    value: [9999, 11, 11],
+    businfo:{}
   }
 
   methods = {
@@ -68,51 +123,105 @@ export default class extends wepy.page {
       tmp2 = this.data.endStation
       this.startStation = tmp2
       this.endStation = tmp1
+      this.$apply()
+      this.modMainArray()
+      this.$apply()
     },
     changeStartStation() {
-      for (let i = 0; i < stations.length; i++) {
+      let i
+      for (i = 0; i < stations.length; i++) {
         if (stations[i][0] === this.data.startStation[0]) break
       }
       this.startStation = stations[(i + 1) % stations.length]
+      this.$apply()
+      this.modMainArray()
+      this.$apply()
     },
-    changeEndStation() {      
-      for (let i = 0; i < stations.length; i++) {
+    changeEndStation() {
+      let i      
+      for (i = 0; i < stations.length; i++) {
         if (stations[i][0] === this.data.endStation[0]) break
       }
       this.endStation = stations[(i + 1) % stations.length]
-    }
-  }
-  watch = {
-    startStation () {
+      this.$apply()
       this.modMainArray()
+      this.$apply()
     },
-    endStation () {
-      this.modMainArray()
+    dateChange: function(e) {
+      const val = e.detail.value
+      if (this.data.days[val[2]] > 9){
+        this.setData({
+        year: this.data.years[val[0]],
+        month: this.data.months[val[1]],
+        day: this.data.days[val[2]],
+        thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' + this.data.days[val[2]].toString()
+      })
+      } else{
+        this.setData({
+        year: this.data.years[val[0]],
+        month: this.data.months[val[1]],
+        day: this.data.days[val[2]],
+        thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' +  '0' + this.data.days[val[2]].toString()
+      })
+      }     
+    },
+    async startAppointment() {
+      let MsgSend={}
+      MsgSend['code'] = 0
+      MsgSend['message'] = 'ok'
+      MsgSend['data'] = this.StoreRow
+      try {
+      await wepy.$http({
+          url: '/reserve',
+          data: MsgSend,
+          method: 'post'
+    })
+    } catch (error) {
+      alert('预约失败')        
     }
+    },
+    navigateHistory: function (event) {
+      this.$navigate({
+      url: "./busHistory",
+      success: function (res) {
+        console.log(res)
+      },
+      fail:function(res){
+        console.log(res)
+      }
+    })
+  }
   }
   modMainArray() {
     StoreRow = []
-    for (let i = 0; i < Mydata.TestMessage['rows'].length; i++) {
-      if (Mydata.TestMessage['rows'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(Mydata.TestMessage['rows'][i])
+    for (let i = 0; i < this.businfo['data'].length; i++) {
+      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo['data'][i])
       }
     }
-    let numOfTabs = StoreRow.length
-    let arr = []
+    const numOfTabs = StoreRow.length
+    const arr = []
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
     this.test = StoreRow
     this.enumerated = arr
+    this.$apply()
   }
-  async init() {
-    wepy.$http({
-      url: '/intlbus/bus/2018-11-09',
-      method: 'get'
-    })
-  }
-  onLoad() {
+  async onLoad() {
     this.modMainArray()
+    this.$apply()
+    thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
+    let urlTmp = '/bus/'+ thisDate
+    try {
+    this.businfo = (await wepy.$http({
+        url: urlTmp,
+        method: 'get'
+    })).data
+    this.$apply()
+    } catch (error) {
+      alert('当前日期无班车')        
+    }
   }
 }
 </script>
@@ -227,5 +336,46 @@ text-align: center;
 
 .bigTime{
   font-size: 50rpx;
+}
+
+#date{
+  position: relative;
+  top:190rpx;
+  vertical-align: center;
+}
+
+#plus{
+  height: 45rpx;
+  width:45rpx;
+  border:none;
+}
+.appoint{
+  height: 55rpx;
+  width:50%;
+  border:none;
+  background-color:#F0F8FF;
+  border:none;
+  vertical-align: center;
+  font-size:30rpx;
+  position:relative;
+  align-content: center;
+}
+
+#history{
+  background-color: rgb(190, 236, 245);
+  width:40%;
+  border-radius:4rpx;
+  position:absolute;
+  bottom:10%;
+}
+
+#appoi{
+  background-color: rgb(190, 236, 245);
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+  border-radius:5rpx;
+  font-size: 45rpx;
 }
 </style>
