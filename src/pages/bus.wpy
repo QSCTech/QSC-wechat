@@ -9,6 +9,7 @@
     <view  class="whiteTab"  id="chooseStation">
       <button id="PressExchange" @tap="TapExchange">
         <image src="../icon/images/exchange.png " class="exchange">
+        </image>
       </button>   
     </view>
     <text id="RightStationText" class="StationText" @tap="changeEndStation">{{endStation}}</text>
@@ -54,7 +55,7 @@
       <view>
         <button class="appoint" @tap="startAppointment">
       ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
-      <image src="./images/plus.png" id="plus">
+      <image src="./images/plus.png" id="plus"></image>
       </button>
       </view>
     </view>
@@ -74,7 +75,7 @@
 
 <script>
 import wepy from 'wepy'
-
+const navigateText='校车预约'
 const headerImage = require('../icon/imageBase64/header.js')
 const stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
@@ -87,15 +88,15 @@ for (i = date.getFullYear(); i <= (date.getFullYear() + 1); i++) {
   years.push(i)
 }
 for (i = 1; i <= 12; i++) {
-  months.push((date.getMonth()+ i - 1) % 12 )
+  months.push((date.getMonth()+ i - 1) % 12 + 1)
 }
 for (i = 1; i <= 31; i++) {
-  days.push((date.getDate()+ i - 1) % 31)
+  days.push((date.getDate()+ i - 1) % 31 + 1)
 }
 
 export default class extends wepy.page {
   config = {
-    navigationBarTitleText: 'BUS'
+    navigationBarTitleText: this.navigateText
   }
 
   data = {

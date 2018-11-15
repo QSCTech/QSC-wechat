@@ -17,7 +17,7 @@
       <view>
         <button class="appoint" @tap="deleteAppointment">
       ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
-      <image src="../icon/images/minus.png" id="plus">
+      <image src="../icon/images/minus.png" id="plus"></image>
       </button>
       </view>
     </view>
@@ -35,7 +35,7 @@
 
 <script>
 import wepy from 'wepy'
-
+const date = new Date()
 export default class extends wepy.page {
   config = {
     navigationBarTitleText: 'BUS'
@@ -82,15 +82,14 @@ export default class extends wepy.page {
   }
 
   modMainArray() {
-    let StoreRow = []
-    for (let i = 0; i < this.businfo['rows'].length; i++) {
-      if (this.businfo['rows'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(this.businfo['rows'][i])
+    StoreRow = []
+    for (let i = 0; i < this.businfo['data'].length; i++) {
+      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo['data'][i])
       }
     }
-    this.$apply()
-    let numOfTabs = StoreRow.length
-    let arr = []
+    const numOfTabs = StoreRow.length
+    const arr = []
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
@@ -106,7 +105,6 @@ export default class extends wepy.page {
         url: '/book',
         method: 'get'
       })).data
-      this.$apply()
     } catch (error) {
       alert('当前日期无班车') 
     }
