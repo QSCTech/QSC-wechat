@@ -16,7 +16,7 @@
       </view>
       <view>
         <button class="appoint" @tap="deleteAppointment">
-      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
+      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\{{test[idx]['busdate']}}
       <image src="../icon/images/minus.png" id="plus"></image>
       </button>
       </view>
