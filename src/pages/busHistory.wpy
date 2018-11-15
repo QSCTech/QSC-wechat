@@ -62,7 +62,7 @@ export default class extends wepy.page {
         }
       })
     },
-    async deleteAppointment: function(e) {
+    async deleteAppointment(e) {
     const val = e.detail.value
     let MsgSend={}
     MsgSend['code'] = 0
