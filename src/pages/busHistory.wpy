@@ -68,7 +68,7 @@ export default class extends wepy.page {
     MsgSend.push(val)
     try {
       await wepy.$http({
-          url: '/book',
+          url: '/intlbus/book',
           data: MsgSend,
           method: 'patch'
     })
@@ -100,7 +100,7 @@ export default class extends wepy.page {
     this.$apply()
     try {
       this.businfo = (await wepy.$http({
-        url: '/book',
+        url: '/intlbus/book',
         method: 'get'
       })).data
     } catch (error) {

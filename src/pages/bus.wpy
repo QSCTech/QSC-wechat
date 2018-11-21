@@ -175,7 +175,7 @@ export default class extends wepy.page {
       MsgSend.push(val)      
       try {
       await wepy.$http({
-          url: '/plist',
+          url: '/intlbus/plist',
           data: MsgSend,
           method: 'post'
     })
@@ -184,7 +184,7 @@ export default class extends wepy.page {
     }
     try {
       await wepy.$http({
-          url: '/reserve',
+          url: '/intlbus/reserve',
           data: MsgRec,
           method: 'get'
     })
@@ -208,7 +208,7 @@ export default class extends wepy.page {
     StoreRow = []
     storeid = []
     this.data.storeID=[]
-    for (let i = 0; i < this.businfo['data'].length; i++) {
+    for (let i = 0; this.businfo['data'] && i < this.businfo['data'].length; i++) {
       if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
         StoreRow.push(this.businfo['data'][i])
         this.storeID.push(this.businfo['data'][i]['classid'])
@@ -226,21 +226,26 @@ export default class extends wepy.page {
   async onLoad() {
     this.modMainArray()
     this.$apply()
-    let urlTmp
+    let urlTmp, thisDate
     if (date.getDate() >= 10){
       thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
-      urlTmp = '/bus/'+ thisDate
+      urlTmp = '/intlbus/bus/'+ thisDate
     }
     if (date.getDate() < 10){
       thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + '0' + date.getDate().toString()
-      urlTmp = '/bus/'+ thisDate
+      urlTmp = '/intlbus/bus/'+ thisDate
     }
+    // console.log(urlTmp)
     try {
-    this.businfo = (await wepy.$http({
-        url: urlTmp,
-        method: 'get'
-    })).data
+      const res = (await wepy.$http({
+          url: urlTmp,
+          method: 'get'
+      })).data
+      console.log(res)
+      this.modMainArray()
+      this.$apply()
     } catch (error) {
+      console.log(error)
       alert('当前日期无班车')        
     }
     this.$apply()
