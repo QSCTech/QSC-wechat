@@ -16,8 +16,8 @@
       </view>
       <view>
         <button class="appoint" @tap="deleteAppointment">
-      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
-      <image src="../icon/images/minus.png" id="plus">
+      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\{{test[idx]['busdate']}}
+      <image src="../icon/images/minus.png" id="plus"></image>
       </button>
       </view>
     </view>
@@ -35,7 +35,7 @@
 
 <script>
 import wepy from 'wepy'
-
+const date = new Date()
 export default class extends wepy.page {
   config = {
     navigationBarTitleText: 'BUS'
@@ -62,12 +62,11 @@ export default class extends wepy.page {
         }
       })
     },
-    async deleteAppointment() {
-      let MsgSend={}
-      MsgSend['code'] = 0
-      MsgSend['message'] = 'ok'
-      MsgSend['data'] = this.StoreRow
-      try {
+    async deleteAppointment(e) {
+    const val = e.detail.value
+    let MsgSend={}
+    MsgSend.push(val)
+    try {
       await wepy.$http({
           url: '/book',
           data: MsgSend,
@@ -77,20 +76,18 @@ export default class extends wepy.page {
     } catch (error) {
       alert('失败')        
     }
-
     }
   }
 
   modMainArray() {
-    let StoreRow = []
-    for (let i = 0; i < this.businfo['rows'].length; i++) {
-      if (this.businfo['rows'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(this.businfo['rows'][i])
+    StoreRow = []
+    for (let i = 0; i < this.businfo['data'].length; i++) {
+      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo['data'][i])
       }
     }
-    this.$apply()
-    let numOfTabs = StoreRow.length
-    let arr = []
+    const numOfTabs = StoreRow.length
+    const arr = []
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
@@ -106,7 +103,6 @@ export default class extends wepy.page {
         url: '/book',
         method: 'get'
       })).data
-      this.$apply()
     } catch (error) {
       alert('当前日期无班车') 
     }
@@ -116,6 +112,14 @@ export default class extends wepy.page {
 }
 </script>
 <style>
+page {
+  display: block;
+  min-height: 100%;
+  background-color:rgb(42, 60, 85);
+  z-index: -999;
+}
+</style>
+<style scoped>
 page {
   display: block;
   min-height: 100%;
@@ -138,13 +142,6 @@ page {
   text-align: center;
   justify-content: center;
   vertical-align: center;
-}
-
-
-.exchange{
-  margin-top:25rpx;
-  height: 100rpx;
-  width:100rpx;
 }
 
 .StationText{
