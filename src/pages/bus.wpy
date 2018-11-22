@@ -55,7 +55,7 @@
       <view>
         <button class="appoint" @tap="startAppointment">
       ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
-      <image src="./images/plus.png" id="plus"></image>
+      <image src="../icon/images/plus.png" id="plus"></image>
       </button>
       </view>
     </view>
@@ -164,7 +164,12 @@ export default class extends wepy.page {
         day: this.data.days[val[2]],
         thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' +  '0' + this.data.days[val[2]].toString()
       })
-      }     
+      }
+      this.$apply()
+      this.requestDateData()
+      this.modMainArray()
+      this.$apply()
+
     },
     async startAppointment(e) {
       const val = e.detail.value
@@ -219,7 +224,7 @@ export default class extends wepy.page {
     this.enumerated = arr
     this.$apply()
   }
-  requestDateData() {
+  async requestDateData() {
     let urlTmp, thisDate
     if (date.getDate() >= 10){
       thisDate= this.year.toString()+ '-' + this.month.toString() + '-' + this.day.toString()
@@ -242,6 +247,8 @@ export default class extends wepy.page {
       console.log(error)
       alert('当前日期无班车')        
     }
+    this.$apply()
+    this.modMainArray()
     this.$apply()
   }
   async onLoad() {
@@ -402,7 +409,7 @@ text-align: center;
   border:none;
 }
 .appoint{
-  height: 55rpx;
+  height: 50rpx;
   width:50%;
   border:none;
   background-color:#F0F8FF;

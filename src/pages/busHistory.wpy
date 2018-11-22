@@ -64,7 +64,7 @@ export default class extends wepy.page {
     },
     async deleteAppointment(e) {
     const val = e.detail.value
-    let MsgSend={}
+    let MsgSend=[]
     MsgSend.push(val)
     try {
       await wepy.$http({
@@ -81,9 +81,9 @@ export default class extends wepy.page {
 
   modMainArray() {
     StoreRow = []
-    for (let i = 0; i < this.businfo['data'].length; i++) {
-      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(this.businfo['data'][i])
+    for (let i = 0; i < this.businfo.length; i++) {
+      if (this.businfo[i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo[i])
       }
     }
     const numOfTabs = StoreRow.length
