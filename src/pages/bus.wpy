@@ -39,7 +39,7 @@
   </view>
 
   <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*190+230}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['classid']}}">
+    <view class="try" style="top:{{idx*190+400}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['classid']}}">
       <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
         {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
       </view>
@@ -68,7 +68,6 @@
   </view>
 </view>
 </view>
-
 </view>
 </template>
 
@@ -92,7 +91,7 @@ for (i = 1; i <= 12; i++) {
   months.push((date.getMonth()+ i - 1) % 12 + 1)
 }
 for (i = 1; i <= 31; i++) {
-  days.push((date.getDate()+ i - 1) % 31 + 1)
+  days.push((date.getDate()+ i - 2) % 31 + 1)
 }
 
 export default class extends wepy.page {
@@ -116,7 +115,6 @@ export default class extends wepy.page {
     day: date.getDate(),
     value: [9999, 11, 11],
     businfo:{},
-    storeID:[]
   }
 
   methods = {
@@ -188,6 +186,7 @@ export default class extends wepy.page {
           data: MsgRec,
           method: 'get'
     })
+      alert('预约成功')  
     } catch (error) {
       alert('预约失败')        
     }
@@ -206,12 +205,9 @@ export default class extends wepy.page {
   }
   modMainArray() {
     StoreRow = []
-    storeid = []
-    this.data.storeID=[]
-    for (let i = 0; this.businfo['data'] && i < this.businfo['data'].length; i++) {
-      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(this.businfo['data'][i])
-        this.storeID.push(this.businfo['data'][i]['classid'])
+    for (let i = 0; this.businfo && i < this.businfo.length; i++) {
+      if (this.businfo[i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo[i])
       }
     }
     const numOfTabs = StoreRow.length
@@ -221,6 +217,31 @@ export default class extends wepy.page {
     }
     this.test = StoreRow
     this.enumerated = arr
+    this.$apply()
+  }
+  requestDateData() {
+    let urlTmp, thisDate
+    if (date.getDate() >= 10){
+      thisDate= this.year.toString()+ '-' + this.month.toString() + '-' + this.day.toString()
+      urlTmp = '/intlbus/bus/'+ thisDate
+    }
+    if (date.getDate() < 10){
+      thisDate= this.year.toString()+ '-' + this.month.toString() + '-' + '0' + this.day.toString()
+      urlTmp = '/intlbus/bus/'+ thisDate
+    }
+    try {
+      const res = (await wepy.$http({
+          url: urlTmp,
+          method: 'get'
+      })).data
+      console.log(res)
+      this.businfo = res
+      this.$apply()
+      this.modMainArray()
+    } catch (error) {
+      console.log(error)
+      alert('当前日期无班车')        
+    }
     this.$apply()
   }
   async onLoad() {
@@ -235,15 +256,15 @@ export default class extends wepy.page {
       thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + '0' + date.getDate().toString()
       urlTmp = '/intlbus/bus/'+ thisDate
     }
-    // console.log(urlTmp)
     try {
       const res = (await wepy.$http({
           url: urlTmp,
           method: 'get'
       })).data
       console.log(res)
-      this.modMainArray()
+      this.businfo = res
       this.$apply()
+      this.modMainArray()
     } catch (error) {
       console.log(error)
       alert('当前日期无班车')        
