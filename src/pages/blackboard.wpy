@@ -1,5 +1,6 @@
 <template>
     <view class="bb-page">
+        <i-spin size="large" fix wx:if="{{ !loaded }}"></i-spin>
         <view>
             <view wx:for-items="{{alertList}}" wx:for-index="index" wx:for-item="item" wx:key="id" class="alert-component">
                 <view class="container">
@@ -15,6 +16,10 @@
                         </view>
                         <view class="body">
                             <rich-text nodes="{{item.body}}"></rich-text>
+                        </view>
+                        <view class="footer">
+                            <view>{{item.courseName}}</view> 
+                            <view class="teacher">{{item.author.firstName}}</view>
                         </view>
                     </view>
                 </view>
@@ -37,14 +42,15 @@ export default class BBPage extends wepy.page {
     }
 
     data = {
-        alertList: [],
+        alertList: wepy.$storage.get("bbAlerts"),
+        loaded: wepy.$storage.get("bbAlerts")? true: false
     }
     methods = {
         async printFile(e) {
             try {
                 const PRINTid = wepy.$storage.get("account").PRINTid
                 if(!PRINTid) {
-                    throw '请前往通行证页面绑定INTL PRINT ID'
+                    throw '未绑定PRINT ID'
                 }
                 wx.showLoading({
                     title: '提交打印中...',
@@ -63,8 +69,8 @@ export default class BBPage extends wepy.page {
                 })
                 wx.hideLoading()
                 wx.showToast({
-                    title: '任务提交成功，请前往打印机打印',
-                    duration: 4000
+                    title: '任务提交成功',
+                    duration: 2000
                 })
             } catch (error) {
                 wx.hideLoading()
@@ -77,33 +83,56 @@ export default class BBPage extends wepy.page {
         }
     }
     async initAlerts() {
-        const res = await wepy.$http({
-            method: 'get',
-            url: '/blackboard/alert'
-        })
-        return res.data.map(item => {
-            const type = (item.type).split(':')[0]
-            // console.log(type)
-            let typePrased = '其他'
-            if(type === 'CO') {
-                typePrased = '内容(支持一键打印)'
-            } else if (type === 'AN') {
-                typePrased = '公告'
-            } else if (type === 'CR') {
-                typePrased = '课程'
-            } else if (type === 'GB') {
-                typePrased = '成绩'
-            }
-            return {
-                ...item,
-                timeForSort: parseInt(item.time),
-                typePrased
-            }
-        }).sort((a, b) => b.timeForSort - a.timeForSort)
+        try {
+            const res = await wepy.$http({
+                method: 'get',
+                url: '/blackboard/alert'
+            })
+            const data = res.data.map(item => {
+                const type = (item.type).split(':')[0]
+                // console.log(type)
+                let typePrased = '其他'
+                if(type === 'CO') {
+                    typePrased = `内容${item.content.fileUrl ? '(支持一键打印)' : ''}`
+                } else if (type === 'AN') {
+                    typePrased = '公告'
+                } else if (type === 'CR') {
+                    typePrased = '课程'
+                } else if (type === 'GB') {
+                    typePrased = '成绩'
+                }
+                return {
+                    ...item,
+                    timeForSort: parseInt(item.time),
+                    typePrased
+                }
+            }).sort((a, b) => b.timeForSort - a.timeForSort)
+            wepy.$storage.setAsync("bbAlerts", data)
+            return data
+        } catch (error) {
+            wx.showToast({
+                title: error,
+                duration: 2000
+            })
+        }
+
+    }
+    async onPullDownRefresh() {
+        try {
+            this.loaded = false
+            this.$apply()
+            await this.initAlerts()
+            this.loaded = true
+            this.$apply()
+        } catch (error) {
+            
+        }
+        wx.stopPullDownRefresh()
     }
     async onLoad() {
         const res = await this.initAlerts()
         this.alertList = res
+        this.loaded = true
         this.$apply()
     }
 }
@@ -137,10 +166,20 @@ export default class BBPage extends wepy.page {
             text-align: center;
             line-height: 40rpx;
             font-size: 40rpx;
-            margin-bottom: 10rpx;
+            margin-bottom: 14rpx;
         }
         .body {
             font-size: 20rpx;
+        }
+        .footer {
+            font-size: 20rpx;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10rpx;
+            .teacher {
+                font-weight: 700 !important;
+            }
         }
         .ding {
             position: absolute;
