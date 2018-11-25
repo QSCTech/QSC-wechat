@@ -9,7 +9,7 @@ export const http = ({ method, url, data }) => {
     return new Promise((resolve, reject) => {
         method = method.toUpperCase()
         wx.request({
-            url: prefix.prod + url,
+            url: prefix.dev + url,
             method,
             header: {
                 'Authorization': `Bearer ${storage.get("token")}` || ''
