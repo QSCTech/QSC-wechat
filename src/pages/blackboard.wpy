@@ -8,7 +8,7 @@
                             {{item.typePrased}}
                         </view>
                     </view>
-                    <image wx:if="{{ item.content.fileUrl }}" class="ding" src="/icon/ding.svg"></image>
+                    <image wx:if="{{ item.content.fileUrl }}" data-fileurl="{{ item.content.fileUrl }}" bindtap="printFile" class="ding" src="/icon/ding.svg"></image>
                     <view style="width: 100%;">
                         <view class="title">
                             {{item.title}}
@@ -39,6 +39,43 @@ export default class BBPage extends wepy.page {
     data = {
         alertList: [],
     }
+    methods = {
+        async printFile(e) {
+            try {
+                const PRINTid = wepy.$storage.get("account").PRINTid
+                if(!PRINTid) {
+                    throw '请前往通行证页面绑定INTL PRINT ID'
+                }
+                wx.showLoading({
+                    title: '提交打印中...',
+                })
+                const file_url = e.currentTarget.dataset.fileurl
+                const res = await wepy.$http({
+                    method: 'post',
+                    url: '/print/bb',
+                    data: {
+                        file_url,
+                        paper_id: 'A4',
+                        color: '0',
+                        double: 'dupnone',
+                        copies: 1
+                    }
+                })
+                wx.hideLoading()
+                wx.showToast({
+                    title: '任务提交成功，请前往打印机打印',
+                    duration: 4000
+                })
+            } catch (error) {
+                wx.hideLoading()
+                wx.showToast({
+                    title: error,
+                    duration: 2000
+                })
+            }
+
+        }
+    }
     async initAlerts() {
         const res = await wepy.$http({
             method: 'get',
@@ -46,7 +83,7 @@ export default class BBPage extends wepy.page {
         })
         return res.data.map(item => {
             const type = (item.type).split(':')[0]
-            console.log(type)
+            // console.log(type)
             let typePrased = '其他'
             if(type === 'CO') {
                 typePrased = '内容(支持一键打印)'
@@ -59,14 +96,14 @@ export default class BBPage extends wepy.page {
             }
             return {
                 ...item,
+                timeForSort: parseInt(item.time),
                 typePrased
             }
-        })
+        }).sort((a, b) => b.timeForSort - a.timeForSort)
     }
     async onLoad() {
         const res = await this.initAlerts()
         this.alertList = res
-        console.log(res)
         this.$apply()
     }
 }
