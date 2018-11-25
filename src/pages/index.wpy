@@ -45,10 +45,24 @@ export default class IndexPage extends wepy.page {
             
         }
     }
+    async initAccount() {
+        try {
+            const res = (await wepy.$http({
+                method: 'get',
+                url: '/account'
+            })).data
+            wepy.$storage.setAsync("account", res)
+        } catch (error) {
+            
+        }
+    }
     async onLoad() {
         const ecard = wepy.$storage.get('ecard')
         if (!ecard)
             this.initEcard()
+        const account = wepy.$storage.get('account')
+        if(!account)
+            this.initAccount()
         // wx.getHCEState({
         //     success (res) {
         //         console.log(res.errCode)
