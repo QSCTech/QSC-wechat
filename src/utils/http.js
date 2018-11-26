@@ -20,7 +20,7 @@ export const http = ({ method, url, data }) => {
                 if (res.data.code !== 0) {
                     reject(res.data)
                 } else {
-                    resolve(res.data)  
+                    resolve(res.data)
                 }
             },
             fail: (err) => {
