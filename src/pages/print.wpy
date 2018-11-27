@@ -28,7 +28,6 @@
             </view>
         </picker> -->
         <view></view>
-        <view></view>
 
         <view>
             打印站列表
@@ -105,7 +104,8 @@ export default class MyPage extends wepy.page {
                     title: '任务删除成功',
                     duration: 2000
                 })
-                this.initJobs()
+                this.jobList = await this.initJobs()
+                this.$apply()
             } catch (error) {
                 console.log(error)
                 wx.showToast({
@@ -123,7 +123,7 @@ export default class MyPage extends wepy.page {
             })
             return res.data
         } catch (error) {
-            
+            return []
         }
     }
 
