@@ -1,7 +1,7 @@
 <template>
 <view>
   <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*250+50}}rpx" id="{{test[idx]['classid']}}" >
+    <view class="try" style="top:{{idx*250+50}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['bookid']}}">
       <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
         {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
       </view>
@@ -64,8 +64,8 @@ export default class extends wepy.page {
     },
     async deleteAppointment(e) {
     const val = e.detail.value
-    let MsgSend=[]
-    MsgSend.push(val)
+    let MsgSend={}
+    MsgSend.push(tostring(val))
     try {
       await wepy.$http({
           url: '/intlbus/book',
