@@ -154,8 +154,13 @@ export default class extends wepy.page {
       year: this.data.years[val[0]],
       month: this.data.months[val[1]],
       day: this.data.days[val[2]],
-      thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' + this.data.days[val[2]].toString()
       })
+      this.$apply()
+      let dateForUrl = this.data.years[val[0]].toString()+ '-' + ((this.data.months[val[1]].toString().length == 1) ? '0':'')+this.data.months[val[1]].toString() + '-' + ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
+      this.setData({
+          thisDate: dateForUrl
+        })
+      console.log(dateForUrl)
       this.$apply()
       this.requestDateData()
       this.modMainArray()
@@ -164,20 +169,16 @@ export default class extends wepy.page {
     },
     async startAppointment(e) {
       const val = e.detail.value
-      const MsgSend={}
+      let MsgSend=[]
       const MsgRec={}     
-      MsgSend.push(Toint32(val))
-      Msgsend.push(toString(this.passenger))      
-      try {
+      MsgSend.push(val)
+      Msgsend.push(this.passenger.toString())
+      console.log(this.passenger.toString())      
       await wepy.$http({
           url: '/intlbus/reserve',
           data: MsgSend,
           method: 'post'
-    })
-    } catch (error) {
-      console.log('预约失败')        
-    }
-    
+      })
     },
     navigateHistory: function (event) {
       this.$navigate({
@@ -209,8 +210,9 @@ export default class extends wepy.page {
   }
   async requestDateData() {
     let urlTmp, thisDate
-    thisDate= this.year.toString()+ '-' + this.month.toString() + '-' + this.day.toString()
-    urlTmp = '/intlbus/bus/'+ thisDate
+    let dateForUrl = this.data.year.toString()+ '-' + ((this.data.month.toString().length == 1) ? '0':'')+this.data.month.toString() + '-' + ((this.data.day.toString().length == 1) ? '0':'')+ this.data.day.toString()
+    urlTmp = '/intlbus/bus/'+ dateForUrl
+    console.log(urlTmp)
     try {
       const res = (await wepy.$http({
           url: urlTmp,
@@ -224,7 +226,7 @@ export default class extends wepy.page {
       console.log(error)
       wx.showToast({
         title: '当前日期无班车',
-        icon: 'success',
+        icon: 'fail',
         duration: 2000
       })      
     }
@@ -236,7 +238,8 @@ export default class extends wepy.page {
     this.modMainArray()
     this.$apply()
     let urlTmp, thisDate
-    thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
+    thisDate= date.getFullYear().toString()+ '-' + ((date.getMonth().toString().length == 1) ? '0':'') + date.getMonth().toString() + '-' + ((date.getDate().toString().length == 1) ? '0':'') + date.getDate().toString()
+    console.log(thisDate)
     urlTmp = '/intlbus/bus/'+ thisDate
     try {
       const res = (await wepy.$http({
