@@ -1,0 +1,125 @@
+<template>
+    <view class="alert-component">
+        <view class="container">
+            <view class="title-container">
+                <view class="text">
+                    {{alert.title}}
+                </view>
+            </view>
+            <image class="ding" src="/icon/ding.svg"></image>
+            <view style="width: 100%;">
+                asfd
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class Alert extends wepy.component {
+    data = {
+        courses: [],
+        loaded: true
+    }
+props = {
+    // 静态传值
+    title: String,
+
+    // 父向子单向动态传值
+    syncTitle: {
+        type: String,
+        default: 'null'
+    },
+
+    twoWayTitle: {
+        type: String,
+        default: 'nothing',
+        twoWay: true
+    }
+};
+
+
+    onLoad() {
+        console.log(this.title); // p-title
+    console.log(this.syncTitle); // p-title
+    console.log(this.twoWayTitle); // p-title
+    }
+    
+}
+</script>
+
+<style lang="less">
+.alert-component {
+    padding: 30rpx;
+    .hr {
+        height: 1px;
+        width: 100%;
+        background: #eeeeee;
+        margin: 16rpx 0rpx;
+    }
+    .container {
+        padding: 94rpx 30rpx 10rpx 30rpx;
+        position: relative;
+        background-image: linear-gradient(-180deg, #FFFFFF 0%, #FAFAFA 100%);
+        box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.08);
+        border-radius: 12rpx;
+        // height: 300rpx;
+        .ding {
+            position: absolute;
+            height: 60rpx;
+            width: 60rpx;
+            right: 0;
+            top: 0;
+        }
+        .course {
+            width: 100%;
+            // padding: 0rpx 80rpx;
+            font-size: 30rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .left {
+                width: 400rpx;
+                max-width: 400rpx;
+            }
+            .name {
+                line-height: 30rpx;
+                margin-bottom: 8rpx;
+            }
+            .time {
+                font-size: 22rpx;
+                font-weight: 300;
+            }
+            .loca {
+                width: 200rpx;
+                font-size: 24rpx;
+                line-height: 24rpx;
+            }
+        }
+        .title-container {
+            position: absolute;
+            left: 0;
+            top: 10rpx;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 200rpx;
+            height: 60rpx;
+            border-radius: 0rpx 40rpx 40rpx 0rpx;
+            background: #f7f7f7;
+            font-size: 30rpx;
+            .text::before {
+                content:" ";
+                display:inline-block;
+                width: 16rpx;
+                height: 16rpx;
+                position:absolute;
+                top: 50% - 10rpx;
+                left: 10rpx;
+                border-radius: 8rpx;
+                background: #fe8f3e;
+            }
+        }
+    }
+}
+</style>

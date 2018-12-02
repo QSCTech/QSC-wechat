@@ -1,9 +1,23 @@
 <template>
     <view class="print-page">
+        <view>
+            任务列表
+            <view>
+                <view wx:for-items="{{jobList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+                    <view>
+                        {{item.szDocument}} {{item.szDateTime}}  
+                    </view>
+                    <view>
+                        <button data-job="{{ index }}" bindtap="delJob">删除任务</button>
+                    </view>
+                </view>
+
+            </view>
+        </view>
         <!-- <view class="print-form">
             <web-view src="https://mp.weixin.qq.com/"></web-view>
         </view> -->
-        <picker bindchange="paperidChange" value="{{paperidIndex}}" range="{{paperidArray}}" range-key="name">
+        <!-- <picker bindchange="paperidChange" value="{{paperidIndex}}" range="{{paperidArray}}" range-key="name">
                     <view class="picker">
             当前选择：{{ paperidArray[paperidIndex].name }}
             </view>
@@ -12,7 +26,23 @@
                     <view class="picker">
             当前选择：{{ doubleArray[doubleIndex].name }}
             </view>
-        </picker>
+        </picker> -->
+        <view></view>
+
+        <view>
+            打印站列表
+            <view>
+                <view wx:for-items="{{stationList}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+                    <view>
+                        {{item.szName}} {{item.szStatus}} {{item.szStatInfo}}
+                    </view>
+                    <view>
+
+                    </view>
+                </view>
+
+            </view>
+        </view>
     </view>
 </template>
 <script>
@@ -50,6 +80,8 @@ export default class MyPage extends wepy.page {
         ],
         paperidIndex: 0,
         doubleIndex: 0,
+        jobList: [],
+        stationList: []
     }
     methods = {
         paperidChange: (e) => {
@@ -57,7 +89,63 @@ export default class MyPage extends wepy.page {
         },
         doubleChange: (e) => {
             this.doubleIndex = e.detail.value
+        },
+        delJob: async(e) => {
+            try {
+                const job_id = this.jobList[e.currentTarget.dataset.job].dwJobId;
+                const res = await wepy.$http({
+                    url: '/print/job',
+                    method: 'delete',
+                    data: {
+                        job_id
+                    }
+                })
+                wx.showToast({
+                    title: '任务删除成功',
+                    duration: 2000
+                })
+                this.jobList = await this.initJobs()
+                this.$apply()
+            } catch (error) {
+                console.log(error)
+                wx.showToast({
+                    title: '任务删除失败',
+                    duration: 2000
+                })
+            }
         }
+    }
+    async initJobs() {
+        try {
+            const res = await wepy.$http({
+                url: '/print/job',
+                method: 'get'
+            })
+            return res.data
+        } catch (error) {
+            return []
+        }
+    }
+
+    async initStation() {
+        try {
+            const res = await wepy.$http({
+                url: '/print/station',
+                method: 'get'
+            })
+            return res.data
+        } catch (error) {
+            
+        }
+    }
+    async onLoad() {
+        const [jobList, stationList] = await Promise.all([this.initJobs(), this.initStation()]) 
+
+        this.jobList = jobList
+        this.stationList = stationList
+        console.log(jobList)
+        console.log(stationList)
+        this.$apply()
     }
 }
 </script>

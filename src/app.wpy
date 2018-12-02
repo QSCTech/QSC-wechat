@@ -35,7 +35,8 @@ export default class extends wepy.app {
       'pages/bind',
       'pages/print',
       'pages/bus',
-      'pages/busHistory'
+      'pages/busHistory',
+      'pages/blackboard'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -58,7 +59,7 @@ export default class extends wepy.app {
           selectedIconPath: 'icon/tabbar/schedule@select.png'
         },
         {
-          pagePath: 'pages/index',
+          pagePath: 'pages/blackboard',
           iconPath: 'icon/tabbar/explore.png',
           selectedIconPath: 'icon/tabbar/explore@select.png'
         },

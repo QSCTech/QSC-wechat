@@ -99,7 +99,7 @@ export default class MyPage extends wepy.page {
             this.PRINTid = account.PRINTid
         }
         this.loaded = true
-        this.apply()
+        this.$apply()
     }
 
     async onShow() {
