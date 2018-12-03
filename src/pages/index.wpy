@@ -56,6 +56,34 @@ export default class IndexPage extends wepy.page {
             
         }
     }
+    async initNFC() {
+        wx.getHCEState({
+            success (res) {
+                console.log('[GET HCE] success')
+                console.log(res)
+            },
+            fail(res) {
+                console.log(res)
+            }
+        })
+
+
+
+        wx.startHCE({
+            aid_list: ['E828BD080F'],
+            success (res) {
+                console.log('[START HCE] success')
+                console.log(res)
+                wx.onHCEMessage((res) => {
+                    console.log('[HCE MESSAGE] success')
+                    console.log(res)
+                })
+            },
+            fail(res) {
+                console.log(res)
+            }
+        })
+    }
     async onLoad() {
         const ecard = wepy.$storage.get('ecard')
         if (!ecard)
@@ -63,14 +91,7 @@ export default class IndexPage extends wepy.page {
         const account = wepy.$storage.get('account')
         if(!account)
             this.initAccount()
-        // wx.getHCEState({
-        //     success (res) {
-        //         console.log(res.errCode)
-        //     },
-        //     fail(res) {
-        //         console.log(res)
-        //     }
-        // })
+        // await this.initNFC()
     }
 
     data = {
