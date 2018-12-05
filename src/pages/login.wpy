@@ -1,7 +1,7 @@
 <template>
     <view class="login-page">
         <view class="title">
-            登录到求是潮Wechat
+            登录到求是潮Mobile
         </view>
         <form bindsubmit="formSubmit">
             <view class="form">

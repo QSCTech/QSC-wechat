@@ -28,9 +28,6 @@
                     <!-- <i-icon type="coordinates" size="14" color="#80848f" />  -->
                     关于我们
                 </i-cell>
-                <!-- <i-cell title="开关">
-                    <switch slot="footer" checked />
-                </i-cell> -->
             </i-cell-group>
         </view>
         <view class="action-container">

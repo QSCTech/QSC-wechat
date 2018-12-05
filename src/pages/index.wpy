@@ -30,6 +30,7 @@ export default class IndexPage extends wepy.page {
             "i-toast": "iview/toast/index",
             "i-avatar": "iview/avatar/index"
         },
+        "navigationBarTitleText": "首页",
     }
     components = {
         course: Course
@@ -137,9 +138,9 @@ export default class IndexPage extends wepy.page {
             icon: 'passport'
         },
         {
-            id: 'qsc',
-            name: '求是潮',
-            icon: 'qsc'
+            id: 'nfc',
+            name: 'NFC',
+            icon: 'nfc'
         },
         ],
     }
