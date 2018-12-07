@@ -68,10 +68,8 @@ export default class IndexPage extends wepy.page {
             }
         })
 
-
-
         wx.startHCE({
-            aid_list: ['E828BD080F'],
+            aid_list: ['F223344556'],
             success (res) {
                 console.log('[START HCE] success')
                 console.log(res)
@@ -92,7 +90,7 @@ export default class IndexPage extends wepy.page {
         const account = wepy.$storage.get('account')
         if(!account)
             this.initAccount()
-        // await this.initNFC()
+        await this.initNFC()
     }
 
     data = {
