@@ -38,8 +38,9 @@
     </picker-view>
   </view>
 
-  <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*190+400}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['classid']}}">
+  <view class="center"  wx:for="{{enumerated}}" 
+  wx:for-index="idx" wx:for-item="itemName" wx:key="item"> 
+    <view class="try" style="top:{{idx*190+400}}rpx">
       <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
         {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
       </view>
@@ -141,7 +142,7 @@ export default class extends wepy.page {
       this.startStation = tmp2
       this.endStation = tmp1
       this.$apply()
-      this.modMainArray()
+      this.requestDateData()
       this.$apply()
     },
     changeStartStation() {
@@ -151,7 +152,7 @@ export default class extends wepy.page {
       }
       this.startStation = stations[(i + 1) % stations.length]
       this.$apply()
-      this.modMainArray()
+      this.requestDateData()
       this.$apply()
     },
     changeEndStation() {
@@ -174,20 +175,19 @@ export default class extends wepy.page {
       })
       this.$apply()
       let dateForUrl = this.data.years[val[0]].toString() + '-' + ((this.data.months[val[1]].toString().length == 1) ? '0':'')+this.data.months[val[1]].toString() + '-' + ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
-      this.requestDateData()
       this.setData({
           thisDate: dateForUrl
         })
+      this.requestDateData()
       this.$apply()
-      this.modMainArray()
     },
     async startAppointment(e) {
       const val = e.detail.value
-      let MsgSend=[]
-      const MsgRec={}     
+      console.log(val)
+      const MsgSend = []
       MsgSend.push(val)
-      Msgsend.push(this.passenger.toString())
-      console.log(this.passenger.toString())      
+      Msgsend.push(this.data.passenger[0])
+              
       await wepy.$http({
           url: '/intlbus/reserve',
           data: MsgSend,
@@ -231,7 +231,6 @@ export default class extends wepy.page {
           url: urlTmp,
           method: 'get'
       })).data
-      console.log(res)
       this.businfo = res
       this.$apply()
       this.modMainArray()
@@ -243,32 +242,22 @@ export default class extends wepy.page {
         duration: 2000
       })      
     }
-    this.$apply()
-    this.modMainArray()
-    this.$apply()
   }
   async onLoad() {
     this.requestDateData()
-    this.$apply()
-    this.modMainArray()
-    this.$apply()
     let urlTmp, thisDate
-      const passenger = await wepy.$http({
+    const passenger = await wepy.$http({
           url: '/intlbus/plist',
           method: 'get'
       })
-      console.log(res)
-      this.businfo = res
-      this.passenger = passenger
+      this.passenger = passenger.data
       this.$apply()
-      this.modMainArray()
-    } catch (error) {
-      console.log(error)
-      console.log('当前日期无班车')        
+  } catch (error) {
+    console.log(error)
+    console.log('当前日期无班车')        
     }
   }
   
-
 </script>
 <style>
 page {
