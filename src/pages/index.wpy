@@ -69,7 +69,7 @@ export default class IndexPage extends wepy.page {
         })
 
         wx.startHCE({
-            aid_list: ['F223344556'],
+            aid_list: ['F223344550'],
             success (res) {
                 console.log('[START HCE] success')
                 console.log(res)
