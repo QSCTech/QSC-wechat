@@ -1,36 +1,27 @@
 <template>
 <view>
   <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*250+50}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['bookid']}}">
-      <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
-        {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
+    <view class="try" style="top:{{idx*200}}rpx" id="{{businfo[idx]['classid']}}" value="{{businfo[idx]['bookid']}}">
+      <view wx:if="{{businfo[idx]['psite']!='-'}}" class="smallSite">
+        {{businfo[idx]['ssite']}}--{{businfo[idx]['psite']}}--{{businfo[idx]['esite']}}
       </view>
       <view wx:else class="smallSite">
-        {{test[idx]['ssite']}}--{{test[idx]['esite']}}
+        {{businfo[idx]['ssite']}}--{{businfo[idx]['esite']}}
       </view> 
-      <view wx:if="{{test[idx]['ptime']!='-'}}" class="bigTime">
-        {{test[idx]['stime']}}--{{test[idx]['ptime']}}--{{test[idx]['etime']}}
+      <view wx:if="{{businfo[idx]['ptime']!='-'}}" class="bigTime">
+        {{businfo[idx]['stime']}}
       </view>
       <view wx:else class="bigTime">
-        {{test[idx]['stime']}}--{{test[idx]['etime']}}
+        {{businfo[idx]['stime']}}
       </view>
       <view>
-        <button class="appoint" @tap="deleteAppointment">
-      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\{{test[idx]['busdate']}}
-      <image src="../icon/images/minus.png" id="plus"></image>
+        <button class="appoint" @tap="deleteAppointment" id = "{{storeInfoGlobal[idx]['bookid']}}">
+      {{businfo[idx]['busdate']}}
       </button>
       </view>
     </view>
   </view>
-
-<view class="center" id="bottom">
-<view class="center" id="history">
-  <view class="whiteTab" id="appoi" @tap="back"  >
-    返回
   </view>
-</view>
-</view>
-</view>
 </template>
 
 <script>
@@ -45,10 +36,8 @@ export default class extends wepy.page {
     startStation: '紫金港校区',
     endStation: '海宁国际校区',
     enumerated: '',
-    test: '',
-    time: 'ok',
-    date: 'ok',
-    businfo: {}
+    businfo: {},
+    passenger:{}
   }
   methods = {
     back: function (event) {
@@ -63,39 +52,34 @@ export default class extends wepy.page {
       })
     },
     async deleteAppointment(e) {
-    const val = e.detail.value
-    let MsgSend={}
-    MsgSend.push(tostring(val))
-    try {
-      await wepy.$http({
-          url: '/intlbus/book',
-          data: MsgSend,
-          method: 'patch'
-    })
-    this.$apply()
-    } catch (error) {
-      alert('失败')        
-    }
-    }
+    let val = parseInt(e.currentTarget.id)
+    let msg = JSON.stringify(this.passenger)
+    this.$apply()   
+    try{await wepy.$http({
+        url: '/intlbus/book',
+        data: {
+          'Bookid':val,
+          'Plist':msg
+          },
+        method: 'patch',
+    })}catch (error) {
+      console.log(error)
+      wx.showToast({
+        title: '提交预约失败',
+        duration: 2000
+      })      
   }
-
+  }
+  }
   modMainArray() {
-    StoreRow = []
-    for (let i = 0; i < this.businfo.length; i++) {
-      if (this.businfo[i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(this.businfo[i])
-      }
-    }
-    const numOfTabs = StoreRow.length
+    const numOfTabs = this.businfo.length
     const arr = []
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
-    this.test = StoreRow
     this.enumerated = arr
     this.$apply()
   }
-
   async onLoad() {
     this.$apply()
     try {
@@ -104,8 +88,19 @@ export default class extends wepy.page {
         method: 'get'
       })).data
     } catch (error) {
-      alert('当前日期无班车') 
+      console.log(error)    
     }
+    try{
+      const passenger = await wepy.$http({
+          url: '/intlbus/plist',
+          method: 'get'
+      })
+      this.passenger = passenger.data[0]
+      this.$apply()
+  } catch (error) {
+      console.log(error)      
+    }
+    this.$apply()
     this.modMainArray()
     this.$apply()
   }
@@ -154,7 +149,7 @@ border-bottom: 2px rgb(96, 102, 116) solid;
 
 
 #chooseBus{
-  margin-top: 200rpx;
+  margin-top: 10rpx;
   height:150rpx;
   text-align: center;
   align-items: center;
@@ -167,7 +162,7 @@ text-align: center;
   background-color:#F0F8FF;
   background-size:1000px 500px;
   position:absolute;
-  margin-top: 200rpx;
+  margin-top: 50rpx;
   height:150rpx;
   align-items: center;
   vertical-align: center;
@@ -194,7 +189,7 @@ text-align: center;
   border:none;
 }
 .appoint{
-  height: 55rpx;
+  height: 50rpx;
   width:50%;
   border:none;
   background-color:#F0F8FF;
@@ -203,6 +198,7 @@ text-align: center;
   font-size:30rpx;
   position:relative;
   align-content: center;
+  margin-left:20%;
 }
 
 #history{
@@ -223,9 +219,7 @@ text-align: center;
   font-size: 45rpx;
 }
 
-#botttom{
-  position:relative;
+#appoi::after{
+  border: none;
 }
-
-
 </style>

@@ -1,7 +1,7 @@
 
 <template>
 <view>
-  <view id="header" src="../icon/imageBase64/header.json" style="background-image:url({{msg}})">
+  <view id="header" src="../icon/imageBase64/header.json" style="background-image:url({{headerMsg}})">
     <text id="headerText">BUS</text>
   </view>
   <view class="center">
@@ -38,29 +38,30 @@
     </picker-view>
   </view>
 
-  <view class="center"  wx:for="{{enumerated}}" 
-  wx:for-index="idx" wx:for-item="itemName" wx:key="item"> 
+  <repeat class="center"  for="{{enumerated}}" index="idx" >
+    <view class = "center">
     <view class="try" style="top:{{idx*190+400}}rpx">
-      <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
-        {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
+      <view wx:if="{{storeInfoGlobal[idx]['psite']!='-'}}" class="smallSite">
+        {{storeInfoGlobal[idx]['ssite']}}--{{storeInfoGlobal[idx]['psite']}}--{{storeInfoGlobal[idx]['esite']}}
       </view>
       <view wx:else class="smallSite">
-        {{test[idx]['ssite']}}--{{test[idx]['esite']}}
+        {{storeInfoGlobal[idx]['ssite']}}--{{storeInfoGlobal[idx]['esite']}}
       </view> 
-      <view wx:if="{{test[idx]['ptime']!='-'}}" class="bigTime">
-        {{test[idx]['stime']}}--{{test[idx]['ptime']}}--{{test[idx]['etime']}}
+      <view wx:if="{{storeInfoGlobal[idx]['ptime']!='-'}}" class="bigTime">
+        {{storeInfoGlobal[idx]['stime']}}--{{storeInfoGlobal[idx]['ptime']}}--{{storeInfoGlobal[idx]['etime']}}
       </view>
       <view wx:else class="bigTime">
-        {{test[idx]['stime']}}--{{test[idx]['etime']}}
+        {{storeInfoGlobal[idx]['stime']}}--{{storeInfoGlobal[idx]['etime']}}
       </view>
       <view>
-        <view class="appoint" @tap="startAppointment">
-      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
+        <view class="appoint" @tap="startAppointment" id = "{{storeInfoGlobal[idx]['classid']}}">
+      ({{storeInfoGlobal[idx]['booknum'] >= 1 ? storeInfoGlobal[idx]['booknum'] : '0'}}/{{storeInfoGlobal[idx]['busnum']}})\r\t\r\t\r\t\r\t
       <image src="../icon/images/plus.png" id="plus"></image>
       </view>
       </view>
     </view>
-  </view>
+    </view>
+  </repeat>
 
 <view class="center" id="bottom">
 <view class="center" id="history">
@@ -93,13 +94,12 @@ for (i = 1; i <= 12; i++) {
 }
 
 let monthDaySize
-let month = date.getMonth()
+let month = date.getMonth() + 1
 if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
     monthDaySize = 31;
     } else if (month == 4 || month == 6 || month == 9 || month == 11) {
       monthDaySize = 30;
     } else if (month == 2) {
-      // 计算是否是闰年,如果是二月份则是29天
       if ((year - 2000) % 4 == 0) {
         monthDaySize = 29;
       } else {
@@ -119,20 +119,22 @@ export default class extends wepy.page {
     startStation: '紫金港校区',
     endStation: '海宁国际校区',
     enumerated: '',
-    test: '',
+    storeInfoGlobal: '',
     time: 'ok',
     date: 'ok',
-    msg: headerImage.postBase[0],
     years: years,
     year: date.getFullYear(),
     months: months,
-    month: date.getMonth(),
+    month: date.getMonth() + 1,
     days: days,
     day: date.getDate(),
-    value: [9999, 11, 11],
+    value: [2018, 12, 12],
     businfo:{},
-    passenger:{}
+    passenger:{},
+    appointVal:{},
+    headerMsg: headerImage.postBase[0]
   }
+
 
   methods = {
     TapExchange() {
@@ -174,7 +176,7 @@ export default class extends wepy.page {
       day: this.data.days[val[2]],
       })
       this.$apply()
-      let dateForUrl = this.data.years[val[0]].toString() + '-' + ((this.data.months[val[1]].toString().length == 1) ? '0':'')+this.data.months[val[1]].toString() + '-' + ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
+      let dateForUrl = this.data.years[val[0]].toString() + '-' + (((this.data.months[val[1]]+1).toString().length == 1) ? '0':'')+this.data.months[val[1]].toString() + '-' + ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
       this.setData({
           thisDate: dateForUrl
         })
@@ -182,17 +184,23 @@ export default class extends wepy.page {
       this.$apply()
     },
     async startAppointment(e) {
-      const val = e.detail.value
-      console.log(val)
-      const MsgSend = []
-      MsgSend.push(val)
-      Msgsend.push(this.data.passenger[0])
-              
-      await wepy.$http({
+      let val = parseInt(e.currentTarget.id)
+      let msg = JSON.stringify(this.passenger)
+      this.$apply()   
+      try{await wepy.$http({
           url: '/intlbus/reserve',
-          data: MsgSend,
-          method: 'post'
-      })
+          data: {
+            'Classid':val,
+            'Plist':msg
+            },
+          method: 'post',
+      })}catch (error) {
+        console.log(error)
+        wx.showToast({
+          title: '提交预约失败',
+          duration: 2000
+        })      
+    }
     },
     navigateHistory: function (event) {
       this.$navigate({
@@ -216,15 +224,15 @@ export default class extends wepy.page {
     const numOfTabs = StoreRow.length
     const arr = []
     for (let i = 0; i < numOfTabs; i++) {
-      arr.push(i)
+      arr.push({id:i,click:false})
     }
-    this.test = StoreRow
+    this.storeInfoGlobal = StoreRow
     this.enumerated = arr
     this.$apply()
   }
   async requestDateData() {
     let urlTmp, thisDate
-    let dateForUrl = this.data.year.toString()+ '-' + ((this.data.month.toString().length == 1) ? '0':'')+this.data.month.toString() + '-' + ((this.data.day.toString().length == 1) ? '0':'')+ this.data.day.toString()
+    let dateForUrl = this.data.year.toString()+ '-' + (((this.data.month+1).toString().length == 1) ? '0':'') + this.data.month.toString() + '-' + ((this.data.day.toString().length == 1) ? '0':'') + this.data.day.toString()
     urlTmp = '/intlbus/bus/'+ dateForUrl
     try {
       const res = (await wepy.$http({
@@ -250,7 +258,7 @@ export default class extends wepy.page {
           url: '/intlbus/plist',
           method: 'get'
       })
-      this.passenger = passenger.data
+      this.passenger = passenger.data[0]
       this.$apply()
   } catch (error) {
     console.log(error)
@@ -313,6 +321,7 @@ page {
   justify-content: center;
   vertical-align: center;
 }
+
 
  #PressExchange{
   height: 150rpx;
