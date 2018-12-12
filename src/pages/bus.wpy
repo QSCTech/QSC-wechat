@@ -173,7 +173,10 @@ export default class extends wepy.page {
       day: this.data.days[val[2]],
       })
       this.$apply()
-      let dateForUrl = this.data.years[val[0]].toString() + '-' + (((this.data.months[val[1]]+1).toString().length == 1) ? '0':'')+this.data.months[val[1]].toString() + '-' + ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
+      let y = this.data.years[val[0]].toString()
+      let m = (((this.data.months[val[1]]+1).toString().length == 1) ? '0':'')+this.data.months[val[1]].toString()
+      let d = ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
+      let dateForUrl = y + '-' + m + '-' + d
       this.setData({
           thisDate: dateForUrl
         })
