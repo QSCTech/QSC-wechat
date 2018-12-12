@@ -120,8 +120,6 @@ export default class extends wepy.page {
     endStation: '海宁国际校区',
     enumerated: '',
     storeInfoGlobal: '',
-    time: 'ok',
-    date: 'ok',
     years: years,
     year: date.getFullYear(),
     months: months,
@@ -131,7 +129,6 @@ export default class extends wepy.page {
     value: [2018, 12, 12],
     businfo:{},
     passenger:{},
-    appointVal:{},
     headerMsg: headerImage.postBase[0]
   }
 
