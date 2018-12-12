@@ -232,7 +232,10 @@ export default class extends wepy.page {
   }
   async requestDateData() {
     let urlTmp, thisDate
-    let dateForUrl = this.data.year.toString()+ '-' + (((this.data.month+1).toString().length == 1) ? '0':'') + this.data.month.toString() + '-' + ((this.data.day.toString().length == 1) ? '0':'') + this.data.day.toString()
+    let y = this.data.year.toString()
+    let m = (((this.data.month+1).toString().length == 1) ? '0':'') + this.data.month.toString()
+    let d = ((this.data.day.toString().length == 1) ? '0':'') + this.data.day.toString()
+    let dateForUrl = y + '-' + m + '-' + d
     urlTmp = '/intlbus/bus/'+ dateForUrl
     try {
       const res = (await wepy.$http({
