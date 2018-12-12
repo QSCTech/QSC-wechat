@@ -1,7 +1,7 @@
 
 <template>
 <view>
-  <view id="header" src="../icon/imageBase64/header.json" style="background-image:url({{msg}})">
+  <view id="header" src="../icon/imageBase64/header.json" style="background-image:url({{headerMsg}})">
     <text id="headerText">BUS</text>
   </view>
   <view class="center">
@@ -38,28 +38,30 @@
     </picker-view>
   </view>
 
-  <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*190+230}}rpx" id="{{test[idx]['classid']}}" value="{{test[idx]['classid']}}">
-      <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
-        {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
+  <repeat class="center"  for="{{enumerated}}" index="idx" >
+    <view class = "center">
+    <view class="try" style="top:{{idx*190+400}}rpx">
+      <view wx:if="{{storeInfoGlobal[idx]['psite']!='-'}}" class="smallSite">
+        {{storeInfoGlobal[idx]['ssite']}}--{{storeInfoGlobal[idx]['psite']}}--{{storeInfoGlobal[idx]['esite']}}
       </view>
       <view wx:else class="smallSite">
-        {{test[idx]['ssite']}}--{{test[idx]['esite']}}
+        {{storeInfoGlobal[idx]['ssite']}}--{{storeInfoGlobal[idx]['esite']}}
       </view> 
-      <view wx:if="{{test[idx]['ptime']!='-'}}" class="bigTime">
-        {{test[idx]['stime']}}--{{test[idx]['ptime']}}--{{test[idx]['etime']}}
+      <view wx:if="{{storeInfoGlobal[idx]['ptime']!='-'}}" class="bigTime">
+        {{storeInfoGlobal[idx]['stime']}}--{{storeInfoGlobal[idx]['ptime']}}--{{storeInfoGlobal[idx]['etime']}}
       </view>
       <view wx:else class="bigTime">
-        {{test[idx]['stime']}}--{{test[idx]['etime']}}
+        {{storeInfoGlobal[idx]['stime']}}--{{storeInfoGlobal[idx]['etime']}}
       </view>
       <view>
-        <button class="appoint" @tap="startAppointment">
-      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
-      <image src="./images/plus.png" id="plus"></image>
-      </button>
+        <view class="appoint" @tap="startAppointment" id = "{{storeInfoGlobal[idx]['classid']}}">
+      ({{storeInfoGlobal[idx]['booknum'] >= 1 ? storeInfoGlobal[idx]['booknum'] : '0'}}/{{storeInfoGlobal[idx]['busnum']}})\r\t\r\t\r\t\r\t
+      <image src="../icon/images/plus.png" id="plus"></image>
+      </view>
       </view>
     </view>
-  </view>
+    </view>
+  </repeat>
 
 <view class="center" id="bottom">
 <view class="center" id="history">
@@ -68,7 +70,6 @@
   </view>
 </view>
 </view>
-
 </view>
 </template>
 
@@ -91,33 +92,46 @@ for (i = date.getFullYear(); i <= (date.getFullYear() + 1); i++) {
 for (i = 1; i <= 12; i++) {
   months.push((date.getMonth()+ i - 1) % 12 + 1)
 }
-for (i = 1; i <= 31; i++) {
-  days.push((date.getDate()+ i - 1) % 31 + 1)
+
+let monthDaySize
+let month = date.getMonth() + 1
+if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+    monthDaySize = 31;
+    } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+      monthDaySize = 30;
+    } else if (month == 2) {
+      if ((year - 2000) % 4 == 0) {
+        monthDaySize = 29;
+      } else {
+        monthDaySize = 28;
+      }
+    }
+
+for (i = 0; i < monthDaySize; i++) {
+  days.push((date.getDate()+ i) % monthDaySize)
 }
 
 export default class extends wepy.page {
   config = {
     navigationBarTitleText: this.navigateText
   }
-
   data = {
     startStation: '紫金港校区',
     endStation: '海宁国际校区',
     enumerated: '',
-    test: '',
-    time: 'ok',
-    date: 'ok',
-    msg: headerImage.postBase[0],
+    storeInfoGlobal: '',
     years: years,
     year: date.getFullYear(),
     months: months,
-    month: date.getMonth(),
+    month: date.getMonth() + 1,
     days: days,
     day: date.getDate(),
-    value: [9999, 11, 11],
+    value: [2018, 12, 12],
     businfo:{},
-    storeID:[]
+    passenger:{},
+    headerMsg: headerImage.postBase[0]
   }
+
 
   methods = {
     TapExchange() {
@@ -127,7 +141,7 @@ export default class extends wepy.page {
       this.startStation = tmp2
       this.endStation = tmp1
       this.$apply()
-      this.modMainArray()
+      this.requestDateData()
       this.$apply()
     },
     changeStartStation() {
@@ -137,7 +151,7 @@ export default class extends wepy.page {
       }
       this.startStation = stations[(i + 1) % stations.length]
       this.$apply()
-      this.modMainArray()
+      this.requestDateData()
       this.$apply()
     },
     changeEndStation() {
@@ -147,49 +161,45 @@ export default class extends wepy.page {
       }
       this.endStation = stations[(i + 1) % stations.length]
       this.$apply()
+      this.requestDateData()
       this.modMainArray()
       this.$apply()
     },
     dateChange: function(e) {
       const val = e.detail.value
-      if (this.data.days[val[2]] > 9){
-        this.setData({
-        year: this.data.years[val[0]],
-        month: this.data.months[val[1]],
-        day: this.data.days[val[2]],
-        thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' + this.data.days[val[2]].toString()
+      this.setData({
+      year: this.data.years[val[0]],
+      month: this.data.months[val[1]],
+      day: this.data.days[val[2]],
       })
-      } else{
-        this.setData({
-        year: this.data.years[val[0]],
-        month: this.data.months[val[1]],
-        day: this.data.days[val[2]],
-        thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' +  '0' + this.data.days[val[2]].toString()
-      })
-      }     
+      this.$apply()
+      let y = this.data.years[val[0]].toString()
+      let m = (((this.data.months[val[1]]+1).toString().length == 1) ? '0':'')+this.data.months[val[1]].toString()
+      let d = ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
+      let dateForUrl = y + '-' + m + '-' + d
+      this.setData({
+          thisDate: dateForUrl
+        })
+      this.requestDateData()
+      this.$apply()
     },
     async startAppointment(e) {
-      const val = e.detail.value
-      const MsgSend={}
-      const MsgRec={}     
-      MsgSend.push(val)      
-      try {
-      await wepy.$http({
-          url: '/intlbus/plist',
-          data: MsgSend,
-          method: 'post'
-    })
-    } catch (error) {
-      alert('预约失败')        
-    }
-    try {
-      await wepy.$http({
+      let val = parseInt(e.currentTarget.id)
+      let msg = JSON.stringify(this.passenger)
+      this.$apply()   
+      try{await wepy.$http({
           url: '/intlbus/reserve',
-          data: MsgRec,
-          method: 'get'
-    })
-    } catch (error) {
-      alert('预约失败')        
+          data: {
+            'Classid':val,
+            'Plist':msg
+            },
+          method: 'post',
+      })}catch (error) {
+        console.log(error)
+        wx.showToast({
+          title: '提交预约失败',
+          duration: 2000
+        })      
     }
     },
     navigateHistory: function (event) {
@@ -206,51 +216,59 @@ export default class extends wepy.page {
   }
   modMainArray() {
     StoreRow = []
-    storeid = []
-    this.data.storeID=[]
-    for (let i = 0; this.businfo['data'] && i < this.businfo['data'].length; i++) {
-      if (this.businfo['data'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(this.businfo['data'][i])
-        this.storeID.push(this.businfo['data'][i]['classid'])
+    for (let i = 0; this.businfo && i < this.businfo.length; i++) {
+      if (this.businfo[i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo[i])
       }
     }
     const numOfTabs = StoreRow.length
     const arr = []
     for (let i = 0; i < numOfTabs; i++) {
-      arr.push(i)
+      arr.push({id:i,click:false})
     }
-    this.test = StoreRow
+    this.storeInfoGlobal = StoreRow
     this.enumerated = arr
     this.$apply()
   }
-  async onLoad() {
-    this.modMainArray()
-    this.$apply()
+  async requestDateData() {
     let urlTmp, thisDate
-    if (date.getDate() >= 10){
-      thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
-      urlTmp = '/intlbus/bus/'+ thisDate
-    }
-    if (date.getDate() < 10){
-      thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + '0' + date.getDate().toString()
-      urlTmp = '/intlbus/bus/'+ thisDate
-    }
-    // console.log(urlTmp)
+    let y = this.data.year.toString()
+    let m = (((this.data.month+1).toString().length == 1) ? '0':'') + this.data.month.toString()
+    let d = ((this.data.day.toString().length == 1) ? '0':'') + this.data.day.toString()
+    let dateForUrl = y + '-' + m + '-' + d
+    urlTmp = '/intlbus/bus/'+ dateForUrl
     try {
       const res = (await wepy.$http({
           url: urlTmp,
           method: 'get'
       })).data
-      console.log(res)
-      this.modMainArray()
+      this.businfo = res
       this.$apply()
+      this.modMainArray()
     } catch (error) {
       console.log(error)
-      alert('当前日期无班车')        
+      wx.showToast({
+        title: '当前日期无班车',
+        icon: 'fail',
+        duration: 2000
+      })      
     }
-    this.$apply()
   }
-}
+  async onLoad() {
+    this.requestDateData()
+    let urlTmp, thisDate
+    const passenger = await wepy.$http({
+          url: '/intlbus/plist',
+          method: 'get'
+      })
+      this.passenger = passenger.data[0]
+      this.$apply()
+  } catch (error) {
+    console.log(error)
+    console.log('当前日期无班车')        
+    }
+  }
+  
 </script>
 <style>
 page {
@@ -306,6 +324,7 @@ page {
   justify-content: center;
   vertical-align: center;
 }
+
 
  #PressExchange{
   height: 150rpx;
@@ -381,7 +400,7 @@ text-align: center;
   border:none;
 }
 .appoint{
-  height: 55rpx;
+  height: 50rpx;
   width:50%;
   border:none;
   background-color:#F0F8FF;
@@ -390,6 +409,7 @@ text-align: center;
   font-size:30rpx;
   position:relative;
   align-content: center;
+  margin-left:20%;
 }
 
 #history{
@@ -408,5 +428,9 @@ text-align: center;
   vertical-align: center;
   border-radius:5rpx;
   font-size: 45rpx;
+}
+
+#appoi::after{
+  border: none;
 }
 </style>
