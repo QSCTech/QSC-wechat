@@ -9,9 +9,31 @@ const get = (key) => {
 }
 
 const setAsync = (key, value) => {
-    return wx.setStorage({
-        key: prefix + key,
-        data: value
+    return new Promise((resolve, reject) => {
+        wx.setStorage({
+            key: prefix + key,
+            data: value,
+            success(res) {
+                resolve(res)
+            },
+            fail(err) {
+                reject(err)
+            }
+        })
+    })
+}
+
+const getAsync = (key) => {
+    return new Promise((resolve, reject) => {
+        wx.getStorage({
+            key: prefix + key,
+            success(res) {
+                resolve(res.data)
+            },
+            fail(err) {
+                reject(err)
+            }
+        })
     })
 }
 
