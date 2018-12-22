@@ -36,7 +36,8 @@ export default class extends wepy.app {
       'pages/print',
       'pages/bus',
       'pages/busHistory',
-      'pages/blackboard'
+      'pages/blackboard',
+      'pages/exam',
     ],
     window: {
       backgroundTextStyle: 'light',

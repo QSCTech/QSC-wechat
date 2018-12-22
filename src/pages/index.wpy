@@ -136,9 +136,14 @@ export default class IndexPage extends wepy.page {
             icon: 'passport'
         },
         {
+            id: 'exam',
+            name: '考试',
+            icon: 'exam'
+        },
+        {
             id: 'nfc',
             name: 'NFC',
-            icon: 'nfc'
+            icon: 'nfc1'
         },
         ],
     }

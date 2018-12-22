@@ -1,0 +1,129 @@
+<template>
+    <view class="exam-page">
+        <i-spin size="large" fix wx:if="{{ !loaded }}"></i-spin>
+        <view class="card" wx:for-items="{{ examList }}" wx:for-index="index" wx:for-item="item" wx:key="index">
+            <view class="title-container">
+                <view class="title">
+                    {{item.class}}
+                </view>
+                <view class="subtitle">
+                    {{item.description}}
+                </view>
+            </view>
+            <view class="hr"></view>
+            <view class="cell">
+                <view class="key">类型</view>
+                <view class="value">{{item.type}}</view>
+            </view>
+            <view class="cell">
+                <view class="key">日期</view>
+                <view class="value">{{item.dateStr}}</view>
+            </view>
+            <view class="cell">
+                <view class="key">时间</view>
+                <view class="value">{{item.time}}</view>
+            </view>
+            <view class="cell">
+                <view class="key">地点</view>
+                <view class="value">{{item.room}}</view>
+            </view>
+            <view class="cell">
+                <view class="key">座位号</view>
+                <view class="value">{{item.seat}}</view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class ExamPage extends wepy.page {
+    config = {
+        "navigationBarTitleText": "考试",
+        "enablePullDownRefresh": true,
+        "usingComponents": {
+            "i-spin": "iview/spin/index",
+            "i-toast": "iview/toast/index"
+        }
+    }
+    data = {
+        examList: [],
+        loaded: true,
+    }
+    async init() {
+        this.loaded = false;
+        this.$apply();
+        const res = await wepy.$http({
+            method: 'get',
+            url: '/exam'
+        })
+        this.examList = res.data;
+        wepy.$storage.setAsync("exam", res.data);
+        this.loaded = true;
+        this.$apply();
+    }
+    async onPullDownRefresh() {
+        await this.init();
+        wx.stopPullDownRefresh();
+    }
+    onLoad() {
+        const cache = wepy.$storage.get("exam");
+        if( !cache ) {
+            this.init();
+        }
+        this.examList = cache;
+    }
+}
+
+</script>
+
+<style lang="less" scoped>
+.hr {
+    height: 1px;
+    width: 100%;
+    background: #eeeeee;
+    margin: 16rpx 0rpx;
+}
+.exam-page {
+    .card {
+        margin: 30rpx;
+        padding: 18rpx 24rpx;
+        background-image: linear-gradient(-180deg, #FFFFFF 0%, #FAFAFA 100%);
+        box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.08);
+        border-radius: 12rpx;
+        .title-container {
+            .title {
+                color: #7874F2;
+                font-size: 38rpx;
+            }
+            .subtitle {
+                font-size: 23rpx;
+                line-height: 26rpx;
+            }
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3rpx 0rpx;
+            font-size: 33rpx;
+            font-weight: 300;
+            .key {
+                display: flex;
+                align-items: center;
+                width: 170rpx;
+                color: #939393;
+                font-weight: 300;
+            }
+            .value {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                
+            }
+        }
+    }
+}
+</style>

@@ -48,6 +48,9 @@
 <script>
 import wepy from 'wepy'
 export default class MyPage extends wepy.page {
+    config = {
+        "navigationBarTitleText": "云打印",
+    }
     data = {
         paperidArray: [
             {
