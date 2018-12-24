@@ -1,5 +1,5 @@
-<style lang="less">
-.todo-page {
+<style lang="less" scoped>
+.old-todo-page {
     .top-container {
         height: 508rpx;
         background: linear-gradient(to bottom, #6445C2 0, #7773E4 40%, #5D88EE 100%);
@@ -45,10 +45,130 @@
         }
     }
 }
+.todo-view {
+    swiper {
+        height: 700rpx;
+    }
+    .slide-item {
+        @redis: 500rpx;
+        @innerRedis: 466rpx;
+        @bgColor: linear-gradient(to right, #6445C2 0,#7773E4 50% , #5D88EE 100%);
+        background: #ffffff;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .circle-bar { 
+            // font-size:200px; 
+            width: @redis; 
+            height: @redis; 
+            position: relative;
+            background: @bgColor;
+            border-radius: 50%;
+            position: absolute; 
+            top:0; right:0; bottom:0; left:0; margin:auto;
+            .circle-bar-left {
+                border-radius: 50%;
+                width: @redis; height: @redis; background-color: #eee;
+                clip:rect(0,@redis/2,auto,0);
+                position: absolute; 
+                top:0; right:0; bottom:0; left:0; margin:auto;
+            }
+            .circle-bar-right {
+                border-radius: 50%;
+                width: @redis; height: @redis; background-color: #eee;
+                clip:rect(0,auto,auto,@redis/2);
+                position: absolute; 
+                top:0; right:0; bottom:0; left:0; margin:auto;
+            }
+            .circle-bar-dark {
+                border-radius: 50%;
+                width: @redis; height: @redis; background: @bgColor;
+                clip:rect(0,auto,auto,@redis/2);
+                position: absolute; 
+                top:0; right:0; bottom:0; left:0; margin:auto;
+            }
+        }
+
+
+        .mask { 
+            border-radius: 50%;
+            width: @innerRedis; 
+            height: @innerRedis;  
+            background-color: #fff;
+            text-align: center;
+            line-height: 0.2em; 
+            color:rgba(0,0,0,0.5); 
+            position: absolute; top:0; right:0; bottom:0; left:0; margin:auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            color: #34348a;
+            font-size: 100rpx;
+        }
+    }
+}
+.add-btn {
+    @radius: 120rpx;
+    width: @radius;
+    height: @radius;
+    border-radius: 50%;
+    background: #F5A623;
+    box-shadow: 1px 8px 23px 0 rgba(245,166,35,0.35);
+    position: fixed;
+    right: 50rpx;
+    bottom: 60rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    view {
+        font-size: 100rpx;
+        color: #fff;
+        margin-top: -20rpx;
+        font-weight: 300;
+    }
+}
 </style>
 
 <template>
-    <view class="todo-page">
+    <view class="todo-view">
+        <swiper
+            indicator-dots="true"
+            autoplay="false"
+            duration="500"
+        >
+        <block wx:for="{{ todoList }}" wx:for-index="index" wx:for-item="item" wx:key="index">
+            <swiper-item>
+                <view class="slide-item">
+                    <view class="circle-bar">
+                        <view class="circle-bar-left" style="transform:rotate({{item.percent > 50 ? (item.percent-50)*3.6 : 0}}deg);"></view>
+                        <view class="circle-bar-right" style="transform:rotate({{item.percent <= 50 ? item.percent*3.6 : 0}}deg);"></view>
+                        <view wx:if="{{ item.percent > 50 }}" class="circle-bar-dark" ></view>
+                        <!-- 遮罩层，显示百分比 -->
+                        <view class="mask">
+                            <view>
+                                00:30
+                            </view>
+                            <!-- <text class="percent">60%</text> -->
+                        </view>
+                    </view>
+                    <!-- <view class="progress-bar">
+                        <view class="inner-circle"></view>
+                    </view> -->
+                </view> 
+            </swiper-item>
+        </block>
+        </swiper>
+    </view>
+
+    <view class="add-btn">
+        <view>
+            +
+        </view>
+    </view>
+    <!-- <view class="old-todo-page">
         <view wx:if="{{ course }}" class="top-container">
             <view class="time-container">
                 <view class="time">
@@ -67,7 +187,7 @@
                 </view>
             </view>
         </view>
-    </view>
+    </view> -->
 </template>
 
 <script>
@@ -85,15 +205,34 @@ export default class MyPage extends wepy.page {
             "i-icon": "iview/icon/index"
         },
         "navigationBarTitleText": "日程",
-        "navigationBarBackgroundColor": "#6445C2",
-        "navigationBarTextStyle": 'white',
+        // "navigationBarBackgroundColor": "#6445C2",
+        // "navigationBarTextStyle": 'white',
     }
     data = {
         courseList: [],
         hour: '',
         minute: '',
         second: '',
-        course: []
+        course: [],
+        todoList: [
+            {
+                percent: 50,
+                name: 'hhh'
+            },
+            {
+                percent: 40,
+                name: 'hhh1'
+            },
+            {
+                percent: 80,
+                name: 'hhh3'
+            },
+        ],
+        imgUrls: [
+            'http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg',
+            'http://img06.tooopen.com/images/20160818/tooopen_sy_175866434296.jpg',
+            'http://img06.tooopen.com/images/20160818/tooopen_sy_175833047715.jpg'
+        ],
     }
     mixins = [ CourseMixin ]
     prase_num(number) {
