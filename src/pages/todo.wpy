@@ -115,8 +115,8 @@
     width: @radius;
     height: @radius;
     border-radius: 50%;
-    background: #F5A623;
-    box-shadow: 1px 8px 23px 0 rgba(245,166,35,0.35);
+    background: rgb(12, 201, 54);
+    box-shadow: 1px 8px 23px 0 rgba(24,166,35,0.35);
     position: fixed;
     right: 50rpx;
     bottom: 60rpx;
