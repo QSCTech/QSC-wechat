@@ -1,0 +1,154 @@
+<template>
+    <view class="grade-page">
+        <view class="overview-container">
+            <view class="box">
+                <view class="label">
+                    总学分
+                </view>
+                <view class="item">
+                    60
+                </view>
+            </view>
+            <view class="box">
+                <view class="label">
+                    学期绩点
+                </view>
+                <view class="item">
+                    3.14
+                </view>
+            </view>
+            <view class="box">
+                <view class="label">
+                    累积绩点
+                </view>
+                <view class="item">
+                    3.14
+                </view>
+            </view>
+            <view class="box">
+                <view class="label">
+                    累积排名
+                </view>
+                <view class="item">
+                    N/A
+                </view>
+            </view>
+        </view>
+        <view class="term-cell">
+            <view wx:for-items="{{ term }}" wx:for-index="index" wx:for-item="item" wx:key="index">
+                <navigator class="term-container">
+                    <view class="name">
+                        {{item.name}}
+                    </view>
+                    <view class="info">
+                        10门课程，共24.5学分
+                    </view>
+                </navigator>
+                <view class="hr" wx:if="{{index != term.length-1}}"></view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class GradePage extends wepy.page {
+    config = {
+        "navigationBarTitleText": "成绩",
+        "enablePullDownRefresh": true,
+        "usingComponents": {
+            "i-spin": "iview/spin/index",
+            "i-toast": "iview/toast/index"
+        },
+        "backgroundTextStyle": "dark"
+    }
+    data = {
+        term: [],
+    }
+    async init() {
+        const res = await wepy.$http({
+            url: '/gpa/term',
+            method: 'get'
+        });
+        this.term = res.data;
+        this.$apply();
+        console.log(this.term)
+    }
+
+    async onLoad() {
+        this.init();
+    }
+}
+</script>
+
+<style lang="less">
+page {
+    background: #f7f7f7 !important;
+}
+.grade-page {
+    .overview-container {
+        margin-top: 70rpx;
+        background: #ffffff;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 180rpx;
+        padding: 0rpx 10rpx;
+        border: 0 solid rgba(151,151,151,0.29);
+        .box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .label {
+                font-weight: 300;
+                font-size: 26rpx;
+            }
+            .item {
+                padding-top: 10rpx;
+                font-weight: 700;
+                font-size: 40rpx;
+            }
+        }
+    }
+    .term-cell {
+        .hr {
+            height: 1px;
+            width: 680rpx;
+            background: #eeeeee;
+            margin: 0rpx 0rpx 0rpx 40rpx;
+            // padding: 0rpx 40rpx;
+        }
+        margin-top: 70rpx;
+        background: #ffffff;
+        .term-container {
+            position: relative;
+            padding: 20rpx 46rpx;
+            .name {
+                font-size: 37rpx;
+                font-weight: 600;
+            }
+            .info {
+                margin-top: 6rpx;
+                font-size: 22rpx;
+                font-weight: 300;
+                color: #666666;
+            }
+            &::after {
+                content:" ";
+                display:inline-block;
+                width:6px;
+                height:6px;
+                position:absolute;
+                top:50%;
+                right:36rpx;
+                border-width:2px 2px 0 0;
+                border-color:#dddee1;
+                border-style:solid;
+                transform:translateY(-50%) matrix(.71,.71,-.71,.71,0,0);
+            }
+        }
+
+    }
+}
+</style>

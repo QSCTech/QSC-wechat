@@ -45,7 +45,8 @@ export default class ExamPage extends wepy.page {
         "usingComponents": {
             "i-spin": "iview/spin/index",
             "i-toast": "iview/toast/index"
-        }
+        },
+        "backgroundTextStyle": "dark"
     }
     data = {
         examList: [],
