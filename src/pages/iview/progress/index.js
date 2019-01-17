@@ -13,11 +13,15 @@ Component({
         },
         strokeWidth: {
             type: Number,
-            value: 10
+            value: 12
         },
         hideInfo: {
             type: Boolean,
-            value: false
+            value: true
+        },
+        units: {
+            type: Number,
+            value: 0,
         }
     }
 });

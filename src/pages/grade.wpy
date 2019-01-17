@@ -6,7 +6,7 @@
                     总学分
                 </view>
                 <view class="item">
-                    60
+                    {{unittotal}}
                 </view>
             </view>
             <view class="box">
@@ -14,7 +14,7 @@
                     学期绩点
                 </view>
                 <view class="item">
-                    3.14
+                    {{gpaList[1].termgpa || 'N/A'}}
                 </view>
             </view>
             <view class="box">
@@ -22,7 +22,7 @@
                     累积绩点
                 </view>
                 <view class="item">
-                    3.14
+                    {{gpaList[1].cumulativegpa || 'N/A'}}
                 </view>
             </view>
             <view class="box">
@@ -35,13 +35,13 @@
             </view>
         </view>
         <view class="term-cell">
-            <view wx:for-items="{{ term }}" wx:for-index="index" wx:for-item="item" wx:key="index">
-                <navigator class="term-container">
+            <view wx:for-items="{{ gpaList }}" wx:for-index="index" wx:for-item="item" wx:key="index">
+                <navigator url="termview?index={{index}}" class="term-container">
                     <view class="name">
-                        {{item.name}}
+                        {{item.term.name}}
                     </view>
                     <view class="info">
-                        10门课程，共24.5学分
+                        {{item.coursenum}}门课程，共{{item.unitsum}}学分
                     </view>
                 </navigator>
                 <view class="hr" wx:if="{{index != term.length-1}}"></view>
@@ -65,19 +65,102 @@ export default class GradePage extends wepy.page {
     }
     data = {
         term: [],
+        gpaList: [],
+        unittotal: 0,
+        scaleToNum: {
+            'A+': 4.0,
+            'A': 4.0,
+            'A-': 3.67,
+            'B+': 3.33,
+            'B': 3.0,
+            'B-': 2.67,
+            'C+': 2.33,
+            'C': 2.00,
+            'C-': 1.67,
+            'D+': 1.33,
+            'D': 1.00,
+            'D-': 0.67,
+            'F': 0.00,
+            'ABS': 0.00
+        }
     }
+
+    async onPullDownRefresh() {
+        await this.init();
+        wx.stopPullDownRefresh();
+    }
+
+    parseGrade = (res, index) => {
+        const newGrade = {
+            cumulativegpa: res.cumulativegpa,
+            termgpa: res.termgpa,
+            unitsum: 0.0,
+            coursenum: res.gpainfo.length,
+            gpainfo: null,
+            term: {
+                name: this.term[index].name,
+                id: this.term[index].id,
+            }
+        };
+    
+        newGrade.gpainfo = res.gpainfo.map(item => {
+            let percent = 0.0;
+            if(item.grading == 'Graded') {
+                percent = this.scaleToNum[item.grade] * 100 / 4;
+            } else if (item.grading == 'Hundred Point Scale') {
+                percent = parseFloat(item.grade) || 0
+            }
+            newGrade.unitsum += parseFloat(item.units) || 0;
+            return {
+                ...item,
+                units: parseFloat(item.units) || 0,
+                percent
+            }
+        })
+        return newGrade;
+    }
+
+    async initGrade(term) {
+        const res = await wepy.$http({
+            url: `/gpa?term=${term}`,
+            method: 'get'
+        });
+        return res.data;
+    }
+
     async init() {
         const res = await wepy.$http({
             url: '/gpa/term',
             method: 'get'
         });
         this.term = res.data;
+        this.gpaList = (await Promise.all(this.term.map(item => this.initGrade(item.id)))).map(this.parseGrade);
+        wepy.$storage.setAsync('gpaList', this.gpaList);
+        this.unittotal = 0;
+        this.gpaList.map(item => {
+            this.unittotal += item.unitsum;
+        })
+        wx.showToast({
+            title: '数据获取成功~',
+            icon: 'success',
+            duration: 2000
+        })
         this.$apply();
-        console.log(this.term)
+        // console.log(this.gpaList);
     }
 
     async onLoad() {
-        this.init();
+        const cache =  await wepy.$storage.getAsync('gpaList');
+        if(cache) {
+            this.gpaList = cache;
+            this.unittotal = 0;
+            this.gpaList.map(item => {
+                this.unittotal += item.unitsum;
+            })
+            this.$apply();
+        } else {
+            this.init();
+        }
     }
 }
 </script>

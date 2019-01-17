@@ -20,7 +20,7 @@ const store = configStore()
 setStore(store)
 
 import { http } from './utils/http'
-import { set, get, setAsync } from './utils/storage'
+import { set, get, setAsync, getAsync } from './utils/storage'
 
 export default class extends wepy.app {
   config = {
@@ -39,6 +39,7 @@ export default class extends wepy.app {
       'pages/blackboard',
       'pages/exam',
       'pages/grade',
+      'pages/termview',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -86,7 +87,7 @@ export default class extends wepy.app {
 
   async onLaunch() {
     wepy.$http = http;
-    wepy.$storage = { set, get, setAsync };
+    wepy.$storage = { set, get, setAsync, getAsync };
     await this.login()
   }
 

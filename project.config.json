@@ -11,5 +11,6 @@
 	"appid": "wxdb99a92837c753dd",
 	"projectname": "qsc-wechat",
 	"miniprogramRoot": "dist/",
+	"libVersion": "2.5.0",
 	"condition": {}
 }

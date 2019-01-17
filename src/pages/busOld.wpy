@@ -1,0 +1,436 @@
+
+<template>
+<view>
+  <view id="header" src="../icon/imageBase64/header.json" style="background-image:url({{headerMsg}})">
+    <text id="headerText">BUS</text>
+  </view>
+  <view class="center">
+    <text id="LeftStationText" class="StationText" @tap="changeStartStation">{{startStation}}</text>
+    <view  class="whiteTab"  id="chooseStation">
+      <button id="PressExchange" @tap="TapExchange">
+        <image src="../icon/images/exchange.png " class="exchange">
+        </image>
+      </button>   
+    </view>
+    <text id="RightStationText" class="StationText" @tap="changeEndStation">{{endStation}}</text>
+  </view>
+
+  <view id="date" class="center">
+    <view class="center">
+     {{year}}年{{month}}月{{day}}日
+    </view>
+    <picker-view indicator-style="height: 50px;" style="width: 90%; height: 50px;" value="{{value}}" bindchange="dateChange" class="whiteTab">
+      <picker-view-column>
+        <view wx:for="{{years}}" style="line-height:30px">
+          {{item}}年
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{months}}" style="line-height: 30px">
+          {{item}}月
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{days}}" style="line-height: 30px">
+          {{item}}日
+        </view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+
+  <repeat class="center"  for="{{enumerated}}" index="idx" >
+    <view class = "center">
+    <view class="try" style="top:{{idx*190+400}}rpx">
+      <view wx:if="{{storeInfoGlobal[idx]['psite']!='-'}}" class="smallSite">
+        {{storeInfoGlobal[idx]['ssite']}}--{{storeInfoGlobal[idx]['psite']}}--{{storeInfoGlobal[idx]['esite']}}
+      </view>
+      <view wx:else class="smallSite">
+        {{storeInfoGlobal[idx]['ssite']}}--{{storeInfoGlobal[idx]['esite']}}
+      </view> 
+      <view wx:if="{{storeInfoGlobal[idx]['ptime']!='-'}}" class="bigTime">
+        {{storeInfoGlobal[idx]['stime']}}--{{storeInfoGlobal[idx]['ptime']}}--{{storeInfoGlobal[idx]['etime']}}
+      </view>
+      <view wx:else class="bigTime">
+        {{storeInfoGlobal[idx]['stime']}}--{{storeInfoGlobal[idx]['etime']}}
+      </view>
+      <view>
+        <view class="appoint" @tap="startAppointment" id = "{{storeInfoGlobal[idx]['classid']}}">
+      ({{storeInfoGlobal[idx]['booknum'] >= 1 ? storeInfoGlobal[idx]['booknum'] : '0'}}/{{storeInfoGlobal[idx]['busnum']}})\r\t\r\t\r\t\r\t
+      <image src="../icon/images/plus.png" id="plus"></image>
+      </view>
+      </view>
+    </view>
+    </view>
+  </repeat>
+
+<view class="center" id="bottom">
+<view class="center" id="history">
+  <view class="whiteTab" id="appoi" @tap="navigateHistory" >
+    查看历史预约
+  </view>
+</view>
+</view>
+</view>
+</template>
+
+
+<script>
+import wepy from 'wepy'
+const navigateText='校车预约'
+const headerImage = require('../icon/imageBase64/header.js')
+const stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
+let StoreRow = []
+let storeid = []
+const date = new Date()
+const years = []
+const months = []
+const days = []
+let i
+for (i = date.getFullYear(); i <= (date.getFullYear() + 1); i++) {
+  years.push(i)
+}
+for (i = 1; i <= 12; i++) {
+  months.push((date.getMonth()+ i - 1) % 12 + 1)
+}
+
+let monthDaySize
+let month = date.getMonth() + 1
+if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+    monthDaySize = 31;
+    } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+      monthDaySize = 30;
+    } else if (month == 2) {
+      if ((year - 2000) % 4 == 0) {
+        monthDaySize = 29;
+      } else {
+        monthDaySize = 28;
+      }
+    }
+
+for (i = 0; i < monthDaySize; i++) {
+  days.push((date.getDate()+ i) % monthDaySize)
+}
+
+export default class extends wepy.page {
+  config = {
+    navigationBarTitleText: this.navigateText
+  }
+  data = {
+    startStation: '紫金港校区',
+    endStation: '海宁国际校区',
+    enumerated: '',
+    storeInfoGlobal: '',
+    years: years,
+    year: date.getFullYear(),
+    months: months,
+    month: date.getMonth() + 1,
+    days: days,
+    day: date.getDate(),
+    value: [2018, 12, 12],
+    businfo:{},
+    passenger:{},
+    headerMsg: headerImage.postBase[0]
+  }
+
+
+  methods = {
+    TapExchange() {
+      let tmp1, tmp2
+      tmp1 = this.data.startStation
+      tmp2 = this.data.endStation
+      this.startStation = tmp2
+      this.endStation = tmp1
+      this.$apply()
+      this.requestDateData()
+      this.$apply()
+    },
+    changeStartStation() {
+      let i
+      for (i = 0; i < stations.length; i++) {
+        if (stations[i][0] === this.data.startStation[0]) break
+      }
+      this.startStation = stations[(i + 1) % stations.length]
+      this.$apply()
+      this.requestDateData()
+      this.$apply()
+    },
+    changeEndStation() {
+      let i      
+      for (i = 0; i < stations.length; i++) {
+        if (stations[i][0] === this.data.endStation[0]) break
+      }
+      this.endStation = stations[(i + 1) % stations.length]
+      this.$apply()
+      this.requestDateData()
+      this.modMainArray()
+      this.$apply()
+    },
+    dateChange: function(e) {
+      const val = e.detail.value
+      this.setData({
+      year: this.data.years[val[0]],
+      month: this.data.months[val[1]],
+      day: this.data.days[val[2]],
+      })
+      this.$apply()
+      let y = this.data.years[val[0]].toString()
+      let m = (((this.data.months[val[1]]+1).toString().length == 1) ? '0':'')+this.data.months[val[1]].toString()
+      let d = ((this.data.days[val[2]].toString().length == 1) ? '0':'')+ this.data.days[val[2]].toString()
+      let dateForUrl = y + '-' + m + '-' + d
+      this.setData({
+          thisDate: dateForUrl
+        })
+      this.requestDateData()
+      this.$apply()
+    },
+    async startAppointment(e) {
+      let val = parseInt(e.currentTarget.id)
+      let msg = JSON.stringify(this.passenger)
+      this.$apply()   
+      try{await wepy.$http({
+          url: '/intlbus/reserve',
+          data: {
+            'Classid':val,
+            'Plist':msg
+            },
+          method: 'post',
+      })}catch (error) {
+        console.log(error)
+        wx.showToast({
+          title: '提交预约失败',
+          duration: 2000
+        })      
+    }
+    },
+    navigateHistory: function (event) {
+      this.$navigate({
+      url: "./busHistory",
+      success: function (res) {
+        console.log(res)
+      },
+      fail:function(res){
+        console.log(res)
+      }
+    })
+  }
+  }
+  modMainArray() {
+    StoreRow = []
+    for (let i = 0; this.businfo && i < this.businfo.length; i++) {
+      if (this.businfo[i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(this.businfo[i])
+      }
+    }
+    const numOfTabs = StoreRow.length
+    const arr = []
+    for (let i = 0; i < numOfTabs; i++) {
+      arr.push({id:i,click:false})
+    }
+    this.storeInfoGlobal = StoreRow
+    this.enumerated = arr
+    this.$apply()
+  }
+  async requestDateData() {
+    let urlTmp, thisDate
+    let y = this.data.year.toString()
+    let m = (((this.data.month+1).toString().length == 1) ? '0':'') + this.data.month.toString()
+    let d = ((this.data.day.toString().length == 1) ? '0':'') + this.data.day.toString()
+    let dateForUrl = y + '-' + m + '-' + d
+    urlTmp = '/intlbus/bus/'+ dateForUrl
+    try {
+      const res = (await wepy.$http({
+          url: urlTmp,
+          method: 'get'
+      })).data
+      this.businfo = res
+      this.$apply()
+      this.modMainArray()
+    } catch (error) {
+      console.log(error)
+      wx.showToast({
+        title: '当前日期无班车',
+        icon: 'fail',
+        duration: 2000
+      })      
+    }
+  }
+  async onLoad() {
+    this.requestDateData()
+    let urlTmp, thisDate
+    const passenger = await wepy.$http({
+          url: '/intlbus/plist',
+          method: 'get'
+      })
+      this.passenger = passenger.data[0]
+      this.$apply()
+  } catch (error) {
+    console.log(error)
+    console.log('当前日期无班车')        
+    }
+  }
+  
+</script>
+<style>
+page {
+  display: block;
+  min-height: 100%;
+  background-color:rgb(42, 60, 85);
+}</style>
+
+<style scoped>
+page {
+  display: block;
+  min-height: 100%;
+  background-color:rgb(42, 60, 85);
+}
+
+#header{
+  width: 100%; 
+  height: 200rpx;
+  background-image:'';
+  color:aliceblue;
+  background-size:1000px 600px;
+  }
+
+#headerText{
+  position: relative;
+  bottom:-70rpx;
+  font-family: "Times New Roman";
+  font-size: 100rpx;
+  left:30rpx;
+}
+
+.whiteTab{
+  text-align: center;
+  width:90%;
+  border-radius: 30rpx;
+  background-color: white;
+  background-size:1000px 500px;
+  position:absolute;
+
+}
+
+ #chooseStation{
+  background-color: rgb(190, 236, 245);
+  margin-top:50rpx;
+  height:150rpx;
+  text-align: center;
+  align-items: center;
+}
+
+.center{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+}
+
+
+ #PressExchange{
+  height: 150rpx;
+  width:200rpx;
+  border:none;
+  color: rgb(190, 236, 245);
+  background-color: rgb(190, 236, 245);
+}
+#PressExchange::after{
+  border: none;
+}
+
+.exchange{
+  margin-top:25rpx;
+  height: 100rpx;
+  width:100rpx;
+}
+
+.StationText{
+position:relative;
+  font-size: 35rpx;
+  top:100rpx;
+  z-index: 999;
+border-bottom: 2px rgb(96, 102, 116) solid;
+}
+
+#LeftStationText{
+  left:-120rpx;
+}
+
+#RightStationText{
+  left:120rpx;
+}
+
+#chooseBus{
+  margin-top: 200rpx;
+  height:150rpx;
+  text-align: center;
+  align-items: center;
+}
+
+.try{
+text-align: center;
+  width:90%;
+  border-radius: 30rpx;
+  background-color:#F0F8FF;
+  background-size:1000px 500px;
+  position:absolute;
+  margin-top: 200rpx;
+  height:150rpx;
+  align-items: center;
+  vertical-align: center;
+}
+
+.smallSite{
+  font-size: 25rpx;
+  position:relative;
+}
+
+.bigTime{
+  font-size: 50rpx;
+}
+
+#date{
+  position: relative;
+  top:190rpx;
+  vertical-align: center;
+}
+
+#plus{
+  height: 45rpx;
+  width:45rpx;
+  border:none;
+}
+.appoint{
+  height: 50rpx;
+  width:50%;
+  border:none;
+  background-color:#F0F8FF;
+  border:none;
+  vertical-align: center;
+  font-size:30rpx;
+  position:relative;
+  align-content: center;
+  margin-left:20%;
+}
+
+#history{
+  background-color: rgb(190, 236, 245);
+  width:40%;
+  border-radius:4rpx;
+  position:absolute;
+  bottom:10%;
+}
+
+#appoi{
+  background-color: rgb(190, 236, 245);
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+  border-radius:5rpx;
+  font-size: 45rpx;
+}
+
+#appoi::after{
+  border: none;
+}
+</style>

@@ -37,4 +37,4 @@ const getAsync = (key) => {
     })
 }
 
-export { set, get, setAsync }
+export { set, get, setAsync, getAsync }

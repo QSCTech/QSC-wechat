@@ -1,0 +1,147 @@
+<template>
+    <view class="termview-page">
+        <view class="overview">
+            <view class="box">
+                <view class="label">
+                    总学分
+                </view>
+                <view class="item">
+                    {{gpaData.unitsum}}
+                </view>
+            </view>
+            <view class="vhr"></view>
+            <view class="box">
+                <view class="label">
+                    学期绩点
+                </view>
+                <view class="item">
+                    {{gpaData.termgpa}}
+                </view>
+            </view>
+            <view class="vhr"></view>
+            <view class="box">
+                <view class="label">
+                    累积绩点
+                </view>
+                <view class="item">
+                    {{gpaData.cumulativegpa}}                    
+                </view>
+            </view>
+            <view class="vhr"></view>
+            <view class="box">
+                <view class="label">
+                    学期排名
+                </view>
+                <view class="item">
+                    N/A
+                </view>
+            </view>
+        </view>
+        <view class="main">
+            <view wx:for-items="{{ gpaData.gpainfo }}" wx:for-index="index" wx:for-item="item" wx:key="index">
+                <view class="grade-bar">
+                    <view class="title">
+                        {{item.description}}　{{item.grade}}
+                    </view>
+                    <view class="bar">
+                        <i-progress percent="{{item.percent}}" status="success" units="{{item.units}}"></i-progress>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <view class="chart">
+
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class GradePage extends wepy.page {
+    config = {
+        "navigationBarTitleText": "",
+        // "disableScroll": true,
+        "usingComponents": {
+            "i-spin": "iview/spin/index",
+            "i-toast": "iview/toast/index",
+            "i-progress": "iview/progress/index"
+        },
+        "navigationBarBackgroundColor": "#56CCF2",
+        "navigationBarTextStyle": 'white',
+        "backgroundTextStyle": "dark"
+    }
+    data = {
+        gpaData: null
+    }
+    // async init() {
+    //     const res = await wepy.$http({
+    //         url: `/gpa?term=${this.term}`,
+    //         method: 'get'
+    //     });
+    //     this.grade = res.data;
+
+
+    //     this.$apply();
+    //     console.log(this.gpainfo)
+    // }
+    async onLoad(options) {
+        this.gpaData = (await wepy.$storage.getAsync('gpaList'))[options.index];
+        wx.setNavigationBarTitle({
+            title: this.gpaData.term.name
+        })
+    }
+}
+</script>
+
+<style lang="less">
+page {
+    background: linear-gradient(to bottom, #56CCF2, #2F80ED); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.termview-page {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #56CCF2, #2F80ED); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    .vhr {
+        height: 90rpx;
+        width: 1px;
+        margin-top: 0rpx;
+        background: #eeeeee;
+    }
+    color: #ffffff;
+    .main {
+        padding: 0rpx 36rpx;
+        .grade-bar {
+            padding: 18rpx 0rpx;
+            .title {
+                font-size: 30rpx;
+                margin-bottom: -6rpx;
+            }
+            .bar {
+                width: 95%;
+            }
+        }
+    }
+    .overview {
+        height: 180rpx;
+        padding-top: 20rpx;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0rpx 30rpx;
+        .box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .label {
+                font-weight: 300;
+                font-size: 26rpx;
+            }
+            .item {
+                padding-top: 10rpx;
+                font-weight: 700;
+                font-size: 40rpx;
+            }
+        }
+    }
+}
+</style>
