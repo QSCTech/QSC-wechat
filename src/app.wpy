@@ -35,7 +35,7 @@ export default class extends wepy.app {
       'pages/bind',
       'pages/print',
       'pages/bus',
-      'pages/busHistory',
+      // 'pages/busHistory',
       'pages/blackboard',
       'pages/exam',
       'pages/grade',

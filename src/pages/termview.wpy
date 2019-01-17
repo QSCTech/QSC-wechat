@@ -109,11 +109,11 @@ page {
     }
     color: #ffffff;
     .main {
-        padding: 0rpx 36rpx;
+        padding: 0rpx 40rpx;
         .grade-bar {
             padding: 18rpx 0rpx;
             .title {
-                font-size: 30rpx;
+                font-size: 31rpx;
                 margin-bottom: -6rpx;
             }
             .bar {

@@ -13,7 +13,7 @@ Component({
         },
         strokeWidth: {
             type: Number,
-            value: 12
+            value: 10
         },
         hideInfo: {
             type: Boolean,
