@@ -92,8 +92,8 @@ export default class GradePage extends wepy.page {
 
     parseGrade = (res, index) => {
         const newGrade = {
-            cumulativegpa: res.cumulativegpa,
-            termgpa: res.termgpa,
+            cumulativegpa: parseFloat(res.cumulativegpa) || 0,
+            termgpa: parseFloat(res.termgpa) || 0,
             unitsum: 0.0,
             coursenum: res.gpainfo.length,
             gpainfo: null,

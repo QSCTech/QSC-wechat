@@ -1,23 +1,132 @@
 <template>
-    
+    <view class="container">
+  <ff-canvas id="line-dom" canvas-id="line" opts="{{ opts }}"></ff-canvas>
+</view>
+
 </template>
 
 <script>
 import wepy from 'wepy';
 
+import F2 from './f2-canvas/lib/f2';
+
+let chart = null;
+
+async function initChart(canvas, width, height) {
+    const parse_term = (term) => {
+        const res = term.split(' ');
+        return `${res[1]} ${res[2]}`
+    }
+
+    const source = await wepy.$storage.getAsync('gpaList');
+
+    // console.log(source)
+    
+    const data = [...source.map(item => {
+        return {
+            term: parse_term(item.term.name),
+            type: 'single',
+            gpa: item.termgpa
+        }
+    }).reverse(), ...source.map(item => {
+        return {
+            term: parse_term(item.term.name),
+            type: 'sum',
+            gpa: item.cumulativegpa
+        }
+    }).reverse()];
+
+    const defs = {
+        term: {
+            type: 'cat'
+        },
+        gpa: {
+            min: 2,
+            max: 4
+        }
+    }
+
+    chart = new F2.Chart({
+        el: canvas,
+        width,
+        height
+    });
+
+    chart.source(data, defs);
+
+    chart.legend({
+        itemWidth: 50,
+        offsetY: -10,
+        valueStyle: {
+            fill: '#808080'
+        }
+    });
+
+    chart.axis('gpa', false);
+    chart.axis('term', {
+        line: {
+            stroke: '#1b1929'
+        },
+        grid: {
+            lineDash: null,
+            stroke: '#1b1929',
+            lineWidth: 1
+        },
+        label: function label(text, index) {
+            if (index % 2 === 0) {
+            return {
+                fill: '#35274b',
+                fontWeight: 'bold'
+            };
+            }
+            return null;
+        }
+    });
+
+    chart.line().position('term*gpa').color('type', ['#503e7a', '#7affec']).size('type', function(val) {
+        if (val === 'single') {
+            return 2;
+        }
+        return 1;
+    }).animate({
+        appear: {
+            duration: 2000
+        }
+    });
+    chart.point().position('term*gpa').color('type', ['#503e7a', '#7affec']).size(5).animate({
+        appear: {
+            duration: 2000
+        }
+    });
+
+    chart.render();
+    return chart;
+}
 
 export default class LoginPage extends wepy.page {
     config = {
         'usingComponents': {
             "i-toast": "iview/toast/index",
-            // "ec-canvas": "ec-canvas/ec-canvas"
+            "ff-canvas": "f2-canvas/f2-canvas"
         },
         "navigationBarTitleText": "校车",
     }
 
+    data = {
+        opts: {
+            onInit: initChart
+        }
+    }
 }
 </script>
 
 <style lang="less">
-
+.container {
+    height: 300rpx;
+    background: #140f21;
+    ff-canvas {
+        width: 100%;
+        height: 100%;
+    }
+}
 </style>

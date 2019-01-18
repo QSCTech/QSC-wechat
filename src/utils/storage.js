@@ -31,7 +31,7 @@ const getAsync = (key) => {
                 resolve(res.data)
             },
             fail(err) {
-                reject(err)
+                resolve(null)
             }
         })
     })
